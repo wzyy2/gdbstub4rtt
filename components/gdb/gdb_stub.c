@@ -1,19 +1,37 @@
+/*
+ * GDB stub.
+ * 
+ * Migarte form linux to rt-thread by Wzyy2
+ * Original edition : KGDB stub
+ *
+ * File      : gdb_stub.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006, RT-Thread Develop Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2014-07-04     Wzyy2      first version
+ */
 #include <rtthread.h>
 #include <string.h>
 #include "gdb_stub.h"
 
 
-#define GDB_MAX_THREAD_QUERY 17
 struct gdb_state {
-    int			ex_vector;
-    int			signo;
-    int			err_code;
-    int			cpu;
-    int			pass_exception;
-    unsigned long		thr_query;
-    unsigned long		threadid;
-    long			gdb_usethreadid;
-};
+    int	            ex_vector;
+    int	            signo;
+    int	            err_code;
+    int	            cpu;
+    int	            pass_exception;
+    unsigned long	thr_query;
+    unsigned long	threadid;
+    long	        gdb_usethreadid;
+}gs;
+
 
 
 /*
@@ -23,19 +41,19 @@ struct gdb_state {
 static struct gdb_bkpt		gdb_break[GDB_MAX_BREAKPOINTS] = {
     [0 ... GDB_MAX_BREAKPOINTS-1] = { .state = BP_UNDEFINED }
 };
-
-
-static const char hexchars[] = "0123456789abcdef";
+/* Storage for the registers, in GDB format. */
+static unsigned long		gdb_regs[(NUMREGBYTES +
+					sizeof(unsigned long) - 1) /
+					sizeof(unsigned long)];
 
 char remcom_in_buffer[BUFMAX];
 char remcom_out_buffer[BUFMAX];
 
 
-
+static const char hexchars[] = "0123456789abcdef";
 /*
  * GDB remote protocol parser:
  */
-
 static int hex(char ch)
 {
     if ((ch >= 'a') && (ch <= 'f'))
@@ -45,6 +63,11 @@ static int hex(char ch)
     if ((ch >= 'A') && (ch <= 'F'))
         return ch - 'A' + 10;
     return -1;
+}
+
+static char tohex(int c)
+{
+    return hexchars[c & 15];
 }
 
 /*
@@ -106,11 +129,10 @@ static int mem2hex(char *mem, char *buf, int count)
     char *tmp = mem;
     char ch,i;
 
-
     while (count > 0) {
         ch = *(tmp++);
-        *(buf++) = hexchars[(ch >> 4) & 0xf];
-        *(buf++) = hexchars[ch & 0xf];
+        *(buf++) = tohex((ch >> 4) & 0xf);
+        *(buf++) = tohex(ch & 0xf);
 
         count--;
     }
@@ -173,7 +195,6 @@ static int write_mem_msg(int binary)
     return -1;
 }
 
-
 /*
  * Send the packet in buffer.
  * Check for gdb connection if asked for.
@@ -199,8 +220,8 @@ static void put_packet(char *buffer)
         }
 
         gdb_io_ops.write_char('#');
-        gdb_io_ops.write_char(hexchars[(checksum >> 4) & 0xf]);
-        gdb_io_ops.write_char(hexchars[checksum & 0xf]);
+        gdb_io_ops.write_char(tohex((checksum >> 4) & 0xf));
+        gdb_io_ops.write_char(tohex(checksum & 0xf));
 
 
         /* Now see what we get in reply. */
@@ -277,8 +298,8 @@ static void error_packet(char *pkt, int error)
 {
     error = -error;
     pkt[0] = 'E';
-    pkt[1] = hexchars[(error / 10)];
-    pkt[2] = hexchars[(error % 10)];
+    pkt[1] = tohex((error / 10));
+    pkt[2] = tohex((error % 10));
     pkt[3] = '\0';
 }
 
@@ -454,15 +475,14 @@ static void gdb_cmd_status()
     int sigval = 0x05; 
     /*remove_all_break();*/
     remcom_out_buffer[0] = 'S';
-    remcom_out_buffer[1] = hexchars[(sigval >> 4) &0xf]; 
-    remcom_out_buffer[2] = hexchars[sigval & 0xf]; 
+    remcom_out_buffer[1] = tohex((sigval >> 4) &0xf); 
+    remcom_out_buffer[2] = tohex(sigval & 0xf); 
     remcom_out_buffer[3] = 0;
 }
 
 /* Handle the 'g' or 'p' get registers request */
 static void gdb_cmd_getregs()
 {
-    char gdb_regs[NUMREGBYTES];
     char len = sizeof(long);
 
     gdb_get_register((unsigned long *)gdb_regs); 
@@ -487,7 +507,6 @@ static void gdb_cmd_getregs()
 /* Handle the 'G' or 'P' set registers request */
 static void gdb_cmd_setregs()
 {
-    char gdb_regs[NUMREGBYTES];
     char len = sizeof(long);
 
 
@@ -617,12 +636,10 @@ static void gdb_cmd_break()
 
 
 
-
-
-static int process_packet(char *packet)
+static int process_packet()
 {
     remcom_out_buffer[0] = 0;
-    switch (packet[0]) {
+    switch (remcom_in_buffer[0]) {
         case '?':
             gdb_cmd_status();/* gdbserial status */
             break;
@@ -667,8 +684,6 @@ static int process_packet(char *packet)
             break;
         case 'T':/* Query thread status */
             break;
-        case 'B':
-            break;
         case 'b': /* bBB...  Set baud rate to BB... */
             break;
     }
@@ -689,7 +704,7 @@ int gdb_process_exception(int sigval)
 
     do {
         get_packet(remcom_in_buffer);
-        status = process_packet(remcom_in_buffer);
+        status = process_packet();
     } while (status == 0);
 
     if (status < 0)
@@ -697,11 +712,10 @@ int gdb_process_exception(int sigval)
     else
         return 1;
 }
-
-void gdb_handle_exception()
+void gdb_handle_exception(int signo, void *regs)
 {
     int sigval;
-
+    gdb_set_register(regs);
 
     gdb_deactivate_sw_breakpoints();
 
@@ -709,8 +723,8 @@ void gdb_handle_exception()
     if (gdb_connected) {
         /* Reply to host that an exception has occurred */
         remcom_out_buffer[0] = 'S';
-        remcom_out_buffer[1] = hexchars[(0x05 >> 4) &0xf]; 
-        remcom_out_buffer[2] = hexchars[0x05 & 0xf]; 
+        remcom_out_buffer[1] = tohex((0x05 >> 4) &0xf); 
+        remcom_out_buffer[2] = tohex(0x05 & 0xf); 
         remcom_out_buffer[3] = 0;
         put_packet(remcom_out_buffer);
     }

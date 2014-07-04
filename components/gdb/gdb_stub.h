@@ -1,3 +1,21 @@
+/*
+ * GDB stub.
+ * 
+ * Migarte form linux to rt-thread by Wzyy2
+ * Original edition : KGDB stub
+ * 
+ * File      : gdb_stub.h
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006, RT-Thread Develop Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2014-07-04     Wzyy2      first version
+ */
 #ifndef __GDB_STUB_H__
 #define __GDB_STUB_H__
 
@@ -70,7 +88,7 @@ struct gdb_arch {
  */
 struct gdb_io {
     int			(*read_char) (void);
-    void			(*write_char) (u8);
+    void			(*write_char) (char);
     void			(*flush) (void);
     int			(*init) (void);
 };
@@ -87,5 +105,6 @@ extern void gdb_put_register(unsigned long *gdb_regs);
 extern void gdb_set_register(void *hw_regs);
 extern int  gdb_arch_handle_exception();
 
+extern void gdb_handle_exception(int signo, void *regs);
 
 #endif /* __GDB_STUB_H__ */

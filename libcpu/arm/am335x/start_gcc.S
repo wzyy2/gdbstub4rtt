@@ -33,7 +33,7 @@
 .equ I_Bit,           0x80            @ when I bit is set, IRQ is disabled
 .equ F_Bit,           0x40            @ when F bit is set, FIQ is disabled
 
-.equ UND_Stack_Size,  0x00000100
+.equ UND_Stack_Size,  0x00000200
 .equ SVC_Stack_Size,  0x00000100
 .equ ABT_Stack_Size,  0x00000000
 .equ FIQ_Stack_Size,  0x00000000

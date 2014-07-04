@@ -60,8 +60,7 @@ void rt_hw_show_register (struct rt_hw_register *regs)
 void rt_hw_trap_udef(struct rt_hw_register *regs)
 {
 #ifdef RT_USING_GDB
-    gdb_set_register((void *)regs);
-    gdb_handle_exception();
+    gdb_handle_exception(0x05, regs);
 #else
 
     rt_hw_show_register(reg);

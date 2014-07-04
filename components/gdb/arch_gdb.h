@@ -1,38 +1,65 @@
+/*
+ * ARM GDB support
+ * arch-specific portion of GDB stub
+ * 
+ * File      : arch_gdb.h(arm)
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006, RT-Thread Develop Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2014-07-04     wzyy2      first version
+ */
 #ifndef __ARM_GDB_H__
 #define __ARM_GDB_H__
 
 
+/*
+ * By doing this as an undefined instruction trap, we force a mode
+ * switch from SVC to UND mode, allowing us to save full kernel state.
+ * We also define a KGDB_COMPILED_BREAK which can be used to compile
+ * in breakpoints. 
+ */
 #define BREAK_INSTR_SIZE	4
-#define HAL_BREAKINST		0xe7ffdefe
-#define HAL_COMPILED_BREAK	0xe7ffdeff
+#define GDB_BREAKINST		0xe7ffdefe
+#define GDB_COMPILED_BREAK	0xe7ffdeff
 
 
-#define _GP_REGS		17
-#define _FP_REGS		0
-#define _EXTRA_REGS		0
-#define GDB_MAX_REGS		(_GP_REGS + (_FP_REGS * 3) + _EXTRA_REGS)
+#define ARM_GP_REGS		16
+#define ARM_FP_REGS		8
+#define ARM_EXTRA_REGS		2
+#define GDB_MAX_REGS		(ARM_GP_REGS + (ARM_FP_REGS * 3) + ARM_EXTRA_REGS)
+#define NUMREGBYTES	    	(GDB_MAX_REGS << 2)
 
-#define GDB_MAX_NO_CPUS	1
+
+/*at least double of numregbytes if needed*/
 #define BUFMAX			200
-#define NUMREGBYTES		(GDB_MAX_REGS << 2)
 
-#define _R0			0
-#define _R1			1
-#define _R2			2
-#define _R3			3
-#define _R4			4
-#define _R5			5
-#define _R6			6
-#define _R7			7
-#define _R8			8
-#define _R9			9
-#define _R10		10
-#define _FP			11
-#define _IP			12
-#define _SPT	  13
-#define _LR			14
-#define _PC			15
-#define _CPSR			(GDB_MAX_REGS - 1)
+
+enum regnames {
+    GDB_R0,     /*0*/
+    GDB_R1,     /*1*/
+    GDB_R2,     /*2*/
+    GDB_R3,     /*3*/
+    GDB_R4,     /*4*/
+    GDB_R5,     /*5*/
+    GDB_R6,     /*6*/
+    GDB_R7,     /*7*/
+    GDB_R8,     /*8*/
+    GDB_R9,     /*9*/
+    GDB_R10,    /*10*/
+    GDB_FP,     /*11*/
+    GDB_IP,     /*12*/
+    GDB_SPT,    /*13*/
+    GDB_LR,     /*14*/
+    GDB_PC,     /*15*/
+    GDB_CPSR = GDB_MAX_REGS-1    /*16*/
+};
+
 
 
 #endif /* __ARM_GDB_H__ */

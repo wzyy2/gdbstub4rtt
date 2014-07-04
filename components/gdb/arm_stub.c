@@ -1,19 +1,37 @@
+/*
+ * ARM GDB support
+ * arch-specific portion of GDB stub
+ * 
+ * File      : arm_stub.c
+ * This file is part of RT-Thread RTOS
+ * COPYRIGHT (C) 2006, RT-Thread Develop Team
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution or at
+ * http://www.rt-thread.org/license/LICENSE
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2014-07-04     Wzyy2      first version
+ */
 #include <rtthread.h>
 #include <gdb_stub.h>
 
-#include "am33xx.h"
-#include "arch_gdb.h"
+#include <arch_gdb.h>
 
 
 static int compiled_break = 0;
-/**
- * struct gdb_arch - Describe architecture specific values.
- */
+
+/*struct gdb_arch - Describe architecture specific values.*/
 struct gdb_arch arch_gdb_ops = {
 	.gdb_bpt_instr		= {0xe7, 0xff, 0xde, 0xfe}
 };
 
-/* compiled_break */
+
+/**
+ * gdb_breakpoint - generate a compiled_breadk
+ * It is used to sync up with a debugger and stop progarm
+ */
 void gdb_breakpoint()
 {
     compiled_break = 1;
@@ -56,51 +74,50 @@ void gdb_set_register(void *hw_regs)
 void gdb_get_register(unsigned long *gdb_regs)
 {
     int regno;
-
     /* Initialize all to zero. */
     for (regno = 0; regno < 17; regno++)
         gdb_regs[regno] = 0;
 
-    gdb_regs[_R0]		= regs->r0;
-    gdb_regs[_R1]		= regs->r1;
-    gdb_regs[_R2]		= regs->r2;
-    gdb_regs[_R3]		= regs->r3;
-    gdb_regs[_R4]		= regs->r4;
-    gdb_regs[_R5]		= regs->r5;
-    gdb_regs[_R6]		= regs->r6;
-    gdb_regs[_R7]		= regs->r7;
-    gdb_regs[_R8]		= regs->r8;
-    gdb_regs[_R9]		= regs->r9;
-    gdb_regs[_R10]	= regs->r10;
-    gdb_regs[_FP]		= regs->fp;
-    gdb_regs[_IP]		= regs->ip;
-    gdb_regs[_SPT]	= regs->sp;
-    gdb_regs[_LR]		= regs->lr;
-    gdb_regs[_PC]		= regs->pc;
-    gdb_regs[_CPSR]	= regs->cpsr;
+    gdb_regs[GDB_R0]		= regs->r0;
+    gdb_regs[GDB_R1]		= regs->r1;
+    gdb_regs[GDB_R2]		= regs->r2;
+    gdb_regs[GDB_R3]		= regs->r3;
+    gdb_regs[GDB_R4]		= regs->r4;
+    gdb_regs[GDB_R5]		= regs->r5;
+    gdb_regs[GDB_R6]		= regs->r6;
+    gdb_regs[GDB_R7]		= regs->r7;
+    gdb_regs[GDB_R8]		= regs->r8;
+    gdb_regs[GDB_R9]		= regs->r9;
+    gdb_regs[GDB_R10]	    = regs->r10;
+    gdb_regs[GDB_FP]		= regs->fp;
+    gdb_regs[GDB_IP]		= regs->ip;
+    gdb_regs[GDB_SPT]	    = regs->sp;
+    gdb_regs[GDB_LR]		= regs->lr;
+    gdb_regs[GDB_PC]		= regs->pc;
+    gdb_regs[GDB_CPSR]  	= regs->cpsr;
 
 };
 
 
 void gdb_put_register(unsigned long *gdb_regs)
 {
-    regs->r0  	= gdb_regs[_R0];
-    regs->r1  	= gdb_regs[_R1];
-    regs->r2  	= gdb_regs[_R2];
-    regs->r3  	= gdb_regs[_R3];
-    regs->r4  	= gdb_regs[_R4];
-    regs->r5  	= gdb_regs[_R5];
-    regs->r6  	= gdb_regs[_R6];
-    regs->r7  	= gdb_regs[_R7];
-    regs->r8  	= gdb_regs[_R8];
-    regs->r9  	= gdb_regs[_R9];
-    regs->r10 	= gdb_regs[_R10];
-    regs->fp	  = gdb_regs[_FP];
-    regs->ip	  = gdb_regs[_IP];
-    regs->sp	  = gdb_regs[_SPT];
-    regs->lr	  = gdb_regs[_LR];
-    regs->pc	  = gdb_regs[_PC];
-    regs->cpsr  = gdb_regs[_CPSR];
+    regs->r0    	= gdb_regs[GDB_R0];
+    regs->r1    	= gdb_regs[GDB_R1];
+    regs->r2    	= gdb_regs[GDB_R2];
+    regs->r3    	= gdb_regs[GDB_R3];
+    regs->r4    	= gdb_regs[GDB_R4];
+    regs->r5    	= gdb_regs[GDB_R5];
+    regs->r6    	= gdb_regs[GDB_R6];
+    regs->r7    	= gdb_regs[GDB_R7];
+    regs->r8    	= gdb_regs[GDB_R8];
+    regs->r9    	= gdb_regs[GDB_R9];
+    regs->r10   	= gdb_regs[GDB_R10];
+    regs->fp        = gdb_regs[GDB_FP];
+    regs->ip    	= gdb_regs[GDB_IP];
+    regs->sp    	= gdb_regs[GDB_SPT];
+    regs->lr	    = gdb_regs[GDB_LR];
+    regs->pc        = gdb_regs[GDB_PC];
+    regs->cpsr      = gdb_regs[GDB_CPSR];
 }
 
 
@@ -109,8 +126,8 @@ int gdb_arch_handle_exception()
 {
     /*
      * If this was a compiled breakpoint, we need to move
-     * to the next instruction or we will just breakpoint
-     * over and over again.
+     * to the next instruction or we will breakpoint
+     * over and over again
      */
     if (compiled_break) {
         compiled_break = 0;
