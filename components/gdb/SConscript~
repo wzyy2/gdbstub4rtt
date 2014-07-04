@@ -1,5 +1,3 @@
-import copy
-Import('RTT_ROOT')
 Import('rtconfig')
 from building import *
 
@@ -10,5 +8,9 @@ src	= Glob('*.c')
 CPPPATH = [cwd]
 
 group = DefineGroup('gdb', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
+
+group = DefineGroup('gdb', src, depend = ['RT_USING_GDB'], CPPPATH = CPPPATH)
 
 Return('group')
