@@ -1,4 +1,7 @@
 /*
+ * This provides the functions that GDB needs to share between 
+ * different portions.
+ *
  * GDB stub.
  * 
  * Migarte form linux to rt-thread by Wzyy2

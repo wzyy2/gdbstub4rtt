@@ -1,5 +1,5 @@
 /*
- * I/O portion of GDB stub
+ * I/O and interface portion of GDB stub
  *
  * File      : hal_stub.h
  * This file is part of RT-Thread RTOS

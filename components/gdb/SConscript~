@@ -6,7 +6,7 @@ comm = 'libcpu/' + rtconfig.ARCH
 cwd = GetCurrentDir()
 src = Glob('*.c') + Glob(comm + '/*.c')
 
-CPPPATH = [cwd, cwd + '/' + comm]
+CPPPATH = [cwd, cwd + comm]
 
 group = DefineGroup('gdb', src, depend = ['RT_USING_GDB'], CPPPATH = CPPPATH)
 
