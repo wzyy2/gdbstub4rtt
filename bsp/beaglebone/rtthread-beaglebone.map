@@ -36,6 +36,7 @@ uart4_int_rx        0x44              build/bsp/drivers/serial.o
 serial0             0x78              build/bsp/drivers/serial.o
 rt_thread_switch_interrupt_flag
                     0x4               build/kernel/libcpu/arm/am335x/interrupt.o
+gs                  0x20              build/kernel/components/gdb/gdb_stub.o
 text_segment        0x80              build/kernel/components/finsh/finsh_vm.o
 finsh_compile_pc    0x4               build/kernel/components/finsh/finsh_compiler.o
 uart0_int_rx        0x44              build/bsp/drivers/serial.o
@@ -66,7 +67,7 @@ remcom_out_buffer   0xc8              build/kernel/components/gdb/gdb_stub.o
 uart1_int_rx        0x44              build/bsp/drivers/serial.o
 _thread_keys        0x40              build/kernel/components/pthreads/pthread_tls.o
 finsh_pc            0x4               build/kernel/components/finsh/finsh_vm.o
-regs                0x4               build/kernel/components/gdb/arm_stub.o
+regs                0x4               build/kernel/components/gdb/libcpu/arm/arm_stub.o
 rt_object_trytake_hook
                     0x4               build/kernel/src/object.o
 finsh_sp            0x4               build/kernel/components/finsh/finsh_vm.o
@@ -747,9 +748,9 @@ LOAD build/kernel/libcpu/arm/am335x/vector_gcc.o
 LOAD build/kernel/libcpu/arm/common/backtrace.o
 LOAD build/kernel/libcpu/arm/common/div0.o
 LOAD build/kernel/libcpu/arm/common/showmem.o
-LOAD build/kernel/components/gdb/arm_stub.o
 LOAD build/kernel/components/gdb/gdb_stub.o
 LOAD build/kernel/components/gdb/hal_stub.o
+LOAD build/kernel/components/gdb/libcpu/arm/arm_stub.o
 LOAD build/kernel/components/pthreads/clock_time.o
 LOAD build/kernel/components/pthreads/mqueue.o
 LOAD build/kernel/components/pthreads/pthread.o
@@ -800,7 +801,7 @@ LOAD /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/crtn.o
                 0x0000000080200000                . = 0x80200000
                 0x0000000080200000                __text_start = .
 
-.text           0x0000000080200000    0x1ed40
+.text           0x0000000080200000    0x1f198
  *(.vectors)
  .vectors       0x0000000080200000       0x40 build/kernel/libcpu/arm/am335x/vector_gcc.o
                 0x0000000080200000                system_vectors
@@ -1034,526 +1035,527 @@ LOAD /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/crtn.o
                 0x000000008020bfc8                rt_cpu_mmu_enable
                 0x000000008020bfdc                rt_cpu_tlb_set
  *fill*         0x000000008020bfe8       0x18 00000000
- .text          0x000000008020c000      0xe60 build/kernel/libcpu/arm/am335x/start_gcc.o
+ .text          0x000000008020c000     0x1260 build/kernel/libcpu/arm/am335x/start_gcc.o
                 0x000000008020c000                stack_start
-                0x000000008020cc00                stack_top
-                0x000000008020cc00                _reset
-                0x000000008020ccc0                vector_undef
-                0x000000008020cd00                vector_swi
-                0x000000008020cd20                vector_pabt
-                0x000000008020cd40                vector_dabt
-                0x000000008020cd80                vector_resv
-                0x000000008020cda0                vector_fiq
-                0x000000008020cdb0                vector_irq
- .text          0x000000008020ce60      0x4a4 build/kernel/components/gdb/arm_stub.o
-                0x000000008020ce60                gdb_breakpoint
-                0x000000008020ce88                gdb_set_register
-                0x000000008020ceb4                gdb_get_register
-                0x000000008020d0e4                gdb_put_register
-                0x000000008020d298                gdb_arch_handle_exception
- .text          0x000000008020d304     0x178c build/kernel/components/gdb/gdb_stub.o
-                0x000000008020e98c                gdb_process_exception
-                0x000000008020e9e8                gdb_handle_exception
- .text          0x000000008020ea90      0x180 build/kernel/components/gdb/hal_stub.o
-                0x000000008020ea90                gdb_start
-                0x000000008020eac4                gdb_set_device
-                0x000000008020eb50                gdb_uart_putc
-                0x000000008020eba4                gdb_uart_getc
- .text          0x000000008020ec10      0xd80 build/kernel/components/drivers/serial/serial.o
-                0x000000008020f6b4                rt_hw_serial_register
-                0x000000008020f7d8                rt_hw_serial_isr
-                0x000000008020f8d0                rt_hw_serial_dma_tx_isr
- .text          0x000000008020f990      0xab0 build/kernel/components/drivers/src/dataqueue.o
-                0x000000008020fa5c                rt_data_queue_init
-                0x000000008020fb6c                rt_data_queue_push
-                0x000000008020fe64                rt_data_queue_pop
-                0x0000000080210240                rt_data_queue_peak
-                0x0000000080210364                rt_data_queue_reset
- .text          0x0000000080210440     0x157c build/kernel/components/finsh/shell.o
-                0x0000000080210440                finsh_get_prompt
-                0x0000000080210570                finsh_set_device
-                0x00000000802106a4                finsh_get_device
-                0x000000008021071c                finsh_set_echo
-                0x00000000802107ac                finsh_get_echo
-                0x0000000080210890                finsh_run_line
-                0x0000000080210bf0                finsh_thread_entry
-                0x0000000080211818                finsh_system_function_init
-                0x0000000080211858                finsh_system_var_init
-                0x0000000080211898                finsh_system_init
- .text          0x00000000802119bc     0x13d0 build/kernel/components/finsh/cmd.o
-                0x0000000080211a5c                hello
-                0x0000000080211a7c                version
-                0x0000000080211c44                list_thread
-                0x0000000080211e14                list_sem
-                0x0000000080211f38                list_event
-                0x000000008021201c                list_mutex
-                0x0000000080212188                list_mailbox
-                0x00000000802122d4                list_msgqueue
-                0x0000000080212414                list_mempool
-                0x0000000080212514                list_timer
-                0x0000000080212618                list_device
-                0x0000000080212638                list
-                0x00000000802128e8                list_prefix
- .text          0x0000000080212d8c       0x78 build/kernel/components/finsh/msh_cmd.o
-                0x0000000080212d8c                cmd_ps
-                0x0000000080212db4                cmd_time
-                0x0000000080212ddc                cmd_free
- .text          0x0000000080212e04      0x90c build/kernel/components/finsh/msh.o
-                0x0000000080212e04                msh_is_used
-                0x0000000080212e8c                msh_help
-                0x0000000080213430                msh_exec
-                0x00000000802135ac                msh_auto_complete
- .text          0x0000000080213710     0x3b6c build/kernel/components/finsh/finsh_compiler.o
-                0x0000000080217184                finsh_compiler_run
- .text          0x000000008021727c       0xbc build/kernel/components/finsh/finsh_error.o
-                0x000000008021727c                finsh_error_init
-                0x00000000802172a8                finsh_error_set
-                0x00000000802172e0                finsh_errno
-                0x0000000080217304                finsh_error_string
- .text          0x0000000080217338      0x6cc build/kernel/components/finsh/finsh_heap.o
-                0x0000000080217338                finsh_heap_init
-                0x00000000802173ac                finsh_heap_allocate
-                0x00000000802174dc                finsh_heap_free
- .text          0x0000000080217a04       0xbc build/kernel/components/finsh/finsh_init.o
-                0x0000000080217a04                finsh_init
-                0x0000000080217a3c                finsh_stack_bottom
-                0x0000000080217a60                finsh_flush
-                0x0000000080217a90                finsh_reset
- .text          0x0000000080217ac0      0x438 build/kernel/components/finsh/finsh_node.o
-                0x0000000080217ac0                finsh_node_init
-                0x0000000080217ae8                finsh_node_allocate
-                0x0000000080217bbc                finsh_node_new_id
-                0x0000000080217cf4                finsh_node_new_char
-                0x0000000080217d4c                finsh_node_new_int
-                0x0000000080217da0                finsh_node_new_long
-                0x0000000080217df4                finsh_node_new_string
-                0x0000000080217ea4                finsh_node_new_ptr
- .text          0x0000000080217ef8     0x1c28 build/kernel/components/finsh/finsh_ops.o
-                0x0000000080217ef8                OP_no_op
-                0x0000000080217f10                OP_add_byte
-                0x0000000080217f88                OP_add_word
-                0x000000008021800c                OP_add_dword
-                0x0000000080218080                OP_sub_byte
-                0x00000000802180f8                OP_sub_word
-                0x000000008021817c                OP_sub_dword
-                0x00000000802181f0                OP_div_byte
-                0x000000008021826c                OP_div_word
-                0x00000000802182f0                OP_div_dword
-                0x0000000080218368                OP_mod_byte
-                0x00000000802183e4                OP_mod_word
-                0x0000000080218468                OP_mod_dword
-                0x00000000802184e0                OP_mul_byte
-                0x0000000080218558                OP_mul_word
-                0x00000000802185dc                OP_mul_dword
-                0x0000000080218650                OP_and_byte
-                0x00000000802186c8                OP_and_word
-                0x0000000080218740                OP_and_dword
-                0x00000000802187b4                OP_or_byte
-                0x000000008021882c                OP_or_word
-                0x00000000802188a4                OP_or_dword
-                0x0000000080218918                OP_xor_byte
-                0x0000000080218990                OP_xor_word
-                0x0000000080218a08                OP_xor_dword
-                0x0000000080218a7c                OP_bw_byte
-                0x0000000080218ac4                OP_bw_word
-                0x0000000080218b0c                OP_bw_dword
-                0x0000000080218b50                OP_shl_byte
-                0x0000000080218bcc                OP_shl_word
-                0x0000000080218c4c                OP_shl_dword
-                0x0000000080218cc0                OP_shr_byte
-                0x0000000080218d3c                OP_shr_word
-                0x0000000080218dbc                OP_shr_dword
-                0x0000000080218e30                OP_ld_byte
-                0x0000000080218ea0                OP_ld_word
-                0x0000000080218f38                OP_ld_dword
-                0x0000000080219000                OP_ld_value_byte
-                0x00000000802190d8                OP_ld_value_byte_stack
-                0x0000000080219128                OP_ld_value_word
-                0x0000000080219200                OP_ld_value_word_stack
-                0x0000000080219250                OP_ld_value_dword
-                0x0000000080219328                OP_ld_value_dword_stack
-                0x0000000080219378                OP_st_byte
-                0x00000000802193dc                OP_st_word
-                0x0000000080219440                OP_st_dword
-                0x00000000802194a4                OP_pop
-                0x00000000802194d8                OP_call
- .text          0x0000000080219b20     0x174c build/kernel/components/finsh/finsh_parser.o
-                0x000000008021afd0                finsh_parser_run
-                0x000000008021b23c                finsh_parser_init
- .text          0x000000008021b26c      0x4a4 build/kernel/components/finsh/finsh_var.o
-                0x000000008021b26c                finsh_var_init
-                0x000000008021b294                finsh_var_insert
-                0x000000008021b3ec                finsh_var_delete
-                0x000000008021b4b4                finsh_var_lookup
-                0x000000008021b568                finsh_sysvar_append
-                0x000000008021b628                finsh_sysvar_lookup
- .text          0x000000008021b710      0x258 build/kernel/components/finsh/finsh_vm.o
-                0x000000008021b710                finsh_vm_run
-                0x000000008021b7d4                finsh_syscall_append
-                0x000000008021b880                finsh_syscall_lookup
- .text          0x000000008021b968     0x1188 build/kernel/components/finsh/finsh_token.o
-                0x000000008021b968                finsh_token_init
-                0x000000008021b9a0                finsh_token_token
-                0x000000008021b9ec                finsh_token_get_token
-                0x000000008021ba20                token_get_string
- .text          0x000000008021caf0      0x2a8 build/kernel/components/libc/minilibc/stdlib.o
-                0x000000008021caf0                atoi
-                0x000000008021cbf0                atol
-                0x000000008021ccf0                malloc
-                0x000000008021cd18                free
-                0x000000008021cd38                realloc
-                0x000000008021cd68                calloc
- .text          0x000000008021cd98     0x17e8 build/kernel/components/libc/minilibc/string.o
-                0x000000008021cd98                strcpy
-                0x000000008021cddc                strncpy
-                0x000000008021ce14                strlcpy
-                0x000000008021ced8                strcmp
-                0x000000008021cf58                strncmp
-                0x000000008021cfe8                strcat
-                0x000000008021d068                strncat
-                0x000000008021d120                strrchr
-                0x000000008021d18c                strncasecmp
-                0x000000008021d35c                tolower
-                0x000000008021d38c                toupper
-                0x000000008021d3bc                simple_strtoul
-                0x000000008021d580                simple_strtol
-                0x000000008021d5ec                simple_strtoull
-                0x000000008021d7e8                simple_strtoll
-                0x000000008021d864                vsscanf
-                0x000000008021e1e0                sscanf
-                0x000000008021e228                strspn
-                0x000000008021e314                strcspn
-                0x000000008021e3f8                strtok_r
-                0x000000008021e4c0                strtok
-                0x000000008021e4f8                strchr
- .text          0x000000008021e580       0xf4 build/kernel/components/init/components.o
-                0x000000008021e5d4                rt_components_board_init
-                0x000000008021e624                rt_components_init
- *fill*         0x000000008021e674        0x4 00000000
- .text          0x000000008021e678      0x278 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_udivsi3.o)
-                0x000000008021e678                __udivsi3
-                0x000000008021e678                __aeabi_uidiv
-                0x000000008021e8d4                __aeabi_uidivmod
- .text          0x000000008021e8f0      0x2b0 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_divsi3.o)
-                0x000000008021e8f0                __aeabi_idiv
-                0x000000008021e8f0                __divsi3
-                0x000000008021eb84                __aeabi_idivmod
- .text          0x000000008021eba0        0x4 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_dvmd_tls.o)
-                0x000000008021eba0                __aeabi_ldiv0
-                0x000000008021eba0                __aeabi_idiv0
+                0x000000008020d000                stack_top
+                0x000000008020d000                _reset
+                0x000000008020d0c0                vector_undef
+                0x000000008020d100                vector_swi
+                0x000000008020d120                vector_pabt
+                0x000000008020d140                vector_dabt
+                0x000000008020d180                vector_resv
+                0x000000008020d1a0                vector_fiq
+                0x000000008020d1b0                vector_irq
+ .text          0x000000008020d260     0x17e4 build/kernel/components/gdb/gdb_stub.o
+                0x000000008020e920                gdb_process_exception
+                0x000000008020e974                gdb_handle_exception
+ .text          0x000000008020ea44      0x180 build/kernel/components/gdb/hal_stub.o
+                0x000000008020ea44                gdb_start
+                0x000000008020ea78                gdb_set_device
+                0x000000008020eb04                gdb_uart_putc
+                0x000000008020eb58                gdb_uart_getc
+ .text          0x000000008020ebc4      0x4a4 build/kernel/components/gdb/libcpu/arm/arm_stub.o
+                0x000000008020ebc4                gdb_breakpoint
+                0x000000008020ebec                gdb_set_register
+                0x000000008020ec18                gdb_get_register
+                0x000000008020ee48                gdb_put_register
+                0x000000008020effc                gdb_arch_handle_exception
+ .text          0x000000008020f068      0xd80 build/kernel/components/drivers/serial/serial.o
+                0x000000008020fb0c                rt_hw_serial_register
+                0x000000008020fc30                rt_hw_serial_isr
+                0x000000008020fd28                rt_hw_serial_dma_tx_isr
+ .text          0x000000008020fde8      0xab0 build/kernel/components/drivers/src/dataqueue.o
+                0x000000008020feb4                rt_data_queue_init
+                0x000000008020ffc4                rt_data_queue_push
+                0x00000000802102bc                rt_data_queue_pop
+                0x0000000080210698                rt_data_queue_peak
+                0x00000000802107bc                rt_data_queue_reset
+ .text          0x0000000080210898     0x157c build/kernel/components/finsh/shell.o
+                0x0000000080210898                finsh_get_prompt
+                0x00000000802109c8                finsh_set_device
+                0x0000000080210afc                finsh_get_device
+                0x0000000080210b74                finsh_set_echo
+                0x0000000080210c04                finsh_get_echo
+                0x0000000080210ce8                finsh_run_line
+                0x0000000080211048                finsh_thread_entry
+                0x0000000080211c70                finsh_system_function_init
+                0x0000000080211cb0                finsh_system_var_init
+                0x0000000080211cf0                finsh_system_init
+ .text          0x0000000080211e14     0x13d0 build/kernel/components/finsh/cmd.o
+                0x0000000080211eb4                hello
+                0x0000000080211ed4                version
+                0x000000008021209c                list_thread
+                0x000000008021226c                list_sem
+                0x0000000080212390                list_event
+                0x0000000080212474                list_mutex
+                0x00000000802125e0                list_mailbox
+                0x000000008021272c                list_msgqueue
+                0x000000008021286c                list_mempool
+                0x000000008021296c                list_timer
+                0x0000000080212a70                list_device
+                0x0000000080212a90                list
+                0x0000000080212d40                list_prefix
+ .text          0x00000000802131e4       0x78 build/kernel/components/finsh/msh_cmd.o
+                0x00000000802131e4                cmd_ps
+                0x000000008021320c                cmd_time
+                0x0000000080213234                cmd_free
+ .text          0x000000008021325c      0x90c build/kernel/components/finsh/msh.o
+                0x000000008021325c                msh_is_used
+                0x00000000802132e4                msh_help
+                0x0000000080213888                msh_exec
+                0x0000000080213a04                msh_auto_complete
+ .text          0x0000000080213b68     0x3b6c build/kernel/components/finsh/finsh_compiler.o
+                0x00000000802175dc                finsh_compiler_run
+ .text          0x00000000802176d4       0xbc build/kernel/components/finsh/finsh_error.o
+                0x00000000802176d4                finsh_error_init
+                0x0000000080217700                finsh_error_set
+                0x0000000080217738                finsh_errno
+                0x000000008021775c                finsh_error_string
+ .text          0x0000000080217790      0x6cc build/kernel/components/finsh/finsh_heap.o
+                0x0000000080217790                finsh_heap_init
+                0x0000000080217804                finsh_heap_allocate
+                0x0000000080217934                finsh_heap_free
+ .text          0x0000000080217e5c       0xbc build/kernel/components/finsh/finsh_init.o
+                0x0000000080217e5c                finsh_init
+                0x0000000080217e94                finsh_stack_bottom
+                0x0000000080217eb8                finsh_flush
+                0x0000000080217ee8                finsh_reset
+ .text          0x0000000080217f18      0x438 build/kernel/components/finsh/finsh_node.o
+                0x0000000080217f18                finsh_node_init
+                0x0000000080217f40                finsh_node_allocate
+                0x0000000080218014                finsh_node_new_id
+                0x000000008021814c                finsh_node_new_char
+                0x00000000802181a4                finsh_node_new_int
+                0x00000000802181f8                finsh_node_new_long
+                0x000000008021824c                finsh_node_new_string
+                0x00000000802182fc                finsh_node_new_ptr
+ .text          0x0000000080218350     0x1c28 build/kernel/components/finsh/finsh_ops.o
+                0x0000000080218350                OP_no_op
+                0x0000000080218368                OP_add_byte
+                0x00000000802183e0                OP_add_word
+                0x0000000080218464                OP_add_dword
+                0x00000000802184d8                OP_sub_byte
+                0x0000000080218550                OP_sub_word
+                0x00000000802185d4                OP_sub_dword
+                0x0000000080218648                OP_div_byte
+                0x00000000802186c4                OP_div_word
+                0x0000000080218748                OP_div_dword
+                0x00000000802187c0                OP_mod_byte
+                0x000000008021883c                OP_mod_word
+                0x00000000802188c0                OP_mod_dword
+                0x0000000080218938                OP_mul_byte
+                0x00000000802189b0                OP_mul_word
+                0x0000000080218a34                OP_mul_dword
+                0x0000000080218aa8                OP_and_byte
+                0x0000000080218b20                OP_and_word
+                0x0000000080218b98                OP_and_dword
+                0x0000000080218c0c                OP_or_byte
+                0x0000000080218c84                OP_or_word
+                0x0000000080218cfc                OP_or_dword
+                0x0000000080218d70                OP_xor_byte
+                0x0000000080218de8                OP_xor_word
+                0x0000000080218e60                OP_xor_dword
+                0x0000000080218ed4                OP_bw_byte
+                0x0000000080218f1c                OP_bw_word
+                0x0000000080218f64                OP_bw_dword
+                0x0000000080218fa8                OP_shl_byte
+                0x0000000080219024                OP_shl_word
+                0x00000000802190a4                OP_shl_dword
+                0x0000000080219118                OP_shr_byte
+                0x0000000080219194                OP_shr_word
+                0x0000000080219214                OP_shr_dword
+                0x0000000080219288                OP_ld_byte
+                0x00000000802192f8                OP_ld_word
+                0x0000000080219390                OP_ld_dword
+                0x0000000080219458                OP_ld_value_byte
+                0x0000000080219530                OP_ld_value_byte_stack
+                0x0000000080219580                OP_ld_value_word
+                0x0000000080219658                OP_ld_value_word_stack
+                0x00000000802196a8                OP_ld_value_dword
+                0x0000000080219780                OP_ld_value_dword_stack
+                0x00000000802197d0                OP_st_byte
+                0x0000000080219834                OP_st_word
+                0x0000000080219898                OP_st_dword
+                0x00000000802198fc                OP_pop
+                0x0000000080219930                OP_call
+ .text          0x0000000080219f78     0x174c build/kernel/components/finsh/finsh_parser.o
+                0x000000008021b428                finsh_parser_run
+                0x000000008021b694                finsh_parser_init
+ .text          0x000000008021b6c4      0x4a4 build/kernel/components/finsh/finsh_var.o
+                0x000000008021b6c4                finsh_var_init
+                0x000000008021b6ec                finsh_var_insert
+                0x000000008021b844                finsh_var_delete
+                0x000000008021b90c                finsh_var_lookup
+                0x000000008021b9c0                finsh_sysvar_append
+                0x000000008021ba80                finsh_sysvar_lookup
+ .text          0x000000008021bb68      0x258 build/kernel/components/finsh/finsh_vm.o
+                0x000000008021bb68                finsh_vm_run
+                0x000000008021bc2c                finsh_syscall_append
+                0x000000008021bcd8                finsh_syscall_lookup
+ .text          0x000000008021bdc0     0x1188 build/kernel/components/finsh/finsh_token.o
+                0x000000008021bdc0                finsh_token_init
+                0x000000008021bdf8                finsh_token_token
+                0x000000008021be44                finsh_token_get_token
+                0x000000008021be78                token_get_string
+ .text          0x000000008021cf48      0x2a8 build/kernel/components/libc/minilibc/stdlib.o
+                0x000000008021cf48                atoi
+                0x000000008021d048                atol
+                0x000000008021d148                malloc
+                0x000000008021d170                free
+                0x000000008021d190                realloc
+                0x000000008021d1c0                calloc
+ .text          0x000000008021d1f0     0x17e8 build/kernel/components/libc/minilibc/string.o
+                0x000000008021d1f0                strcpy
+                0x000000008021d234                strncpy
+                0x000000008021d26c                strlcpy
+                0x000000008021d330                strcmp
+                0x000000008021d3b0                strncmp
+                0x000000008021d440                strcat
+                0x000000008021d4c0                strncat
+                0x000000008021d578                strrchr
+                0x000000008021d5e4                strncasecmp
+                0x000000008021d7b4                tolower
+                0x000000008021d7e4                toupper
+                0x000000008021d814                simple_strtoul
+                0x000000008021d9d8                simple_strtol
+                0x000000008021da44                simple_strtoull
+                0x000000008021dc40                simple_strtoll
+                0x000000008021dcbc                vsscanf
+                0x000000008021e638                sscanf
+                0x000000008021e680                strspn
+                0x000000008021e76c                strcspn
+                0x000000008021e850                strtok_r
+                0x000000008021e918                strtok
+                0x000000008021e950                strchr
+ .text          0x000000008021e9d8       0xf4 build/kernel/components/init/components.o
+                0x000000008021ea2c                rt_components_board_init
+                0x000000008021ea7c                rt_components_init
+ *fill*         0x000000008021eacc        0x4 00000000
+ .text          0x000000008021ead0      0x278 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_udivsi3.o)
+                0x000000008021ead0                __udivsi3
+                0x000000008021ead0                __aeabi_uidiv
+                0x000000008021ed2c                __aeabi_uidivmod
+ .text          0x000000008021ed48      0x2b0 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_divsi3.o)
+                0x000000008021ed48                __aeabi_idiv
+                0x000000008021ed48                __divsi3
+                0x000000008021efdc                __aeabi_idivmod
+ .text          0x000000008021eff8        0x4 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_dvmd_tls.o)
+                0x000000008021eff8                __aeabi_ldiv0
+                0x000000008021eff8                __aeabi_idiv0
  *(.text.*)
-                0x000000008021eba4                . = ALIGN (0x4)
-                0x000000008021eba4                __fsymtab_start = .
+                0x000000008021effc                . = ALIGN (0x4)
+                0x000000008021effc                __fsymtab_start = .
  *(FSymTab)
- FSymTab        0x000000008021eba4       0x18 build/bsp/applications/board.o
-                0x000000008021eba4                __fsym_reboot
-                0x000000008021ebb0                __fsym___cmd_reboot
- FSymTab        0x000000008021ebbc        0xc build/kernel/src/mem.o
-                0x000000008021ebbc                __fsym_list_mem
- FSymTab        0x000000008021ebc8      0x108 build/kernel/components/finsh/cmd.o
-                0x000000008021ebc8                __fsym_hello
-                0x000000008021ebd4                __fsym_version
-                0x000000008021ebe0                __fsym___cmd_version
-                0x000000008021ebec                __fsym_list_thread
-                0x000000008021ebf8                __fsym___cmd_list_thread
-                0x000000008021ec04                __fsym_list_sem
-                0x000000008021ec10                __fsym___cmd_list_sem
-                0x000000008021ec1c                __fsym_list_event
-                0x000000008021ec28                __fsym___cmd_list_event
-                0x000000008021ec34                __fsym_list_mutex
-                0x000000008021ec40                __fsym___cmd_list_mutex
-                0x000000008021ec4c                __fsym_list_mailbox
-                0x000000008021ec58                __fsym___cmd_list_mailbox
-                0x000000008021ec64                __fsym_list_msgqueue
-                0x000000008021ec70                __fsym___cmd_list_msgqueue
-                0x000000008021ec7c                __fsym_list_mempool
-                0x000000008021ec88                __fsym___cmd_list_mempool
-                0x000000008021ec94                __fsym_list_timer
-                0x000000008021eca0                __fsym___cmd_list_timer
-                0x000000008021ecac                __fsym_list_device
-                0x000000008021ecb8                __fsym___cmd_list_device
-                0x000000008021ecc4                __fsym_list
- FSymTab        0x000000008021ecd0       0x24 build/kernel/components/finsh/msh_cmd.o
-                0x000000008021ecd0                __fsym___cmd_ps
-                0x000000008021ecdc                __fsym___cmd_time
-                0x000000008021ece8                __fsym___cmd_free
- FSymTab        0x000000008021ecf4       0x24 build/kernel/components/finsh/msh.o
-                0x000000008021ecf4                __fsym___cmd_exit
-                0x000000008021ed00                __fsym_msh
-                0x000000008021ed0c                __fsym___cmd_help
-                0x000000008021ed18                __fsymtab_end = .
-                0x000000008021ed18                . = ALIGN (0x4)
-                0x000000008021ed18                __vsymtab_start = .
+ FSymTab        0x000000008021effc       0x18 build/bsp/applications/board.o
+                0x000000008021effc                __fsym_reboot
+                0x000000008021f008                __fsym___cmd_reboot
+ FSymTab        0x000000008021f014        0xc build/kernel/src/mem.o
+                0x000000008021f014                __fsym_list_mem
+ FSymTab        0x000000008021f020      0x108 build/kernel/components/finsh/cmd.o
+                0x000000008021f020                __fsym_hello
+                0x000000008021f02c                __fsym_version
+                0x000000008021f038                __fsym___cmd_version
+                0x000000008021f044                __fsym_list_thread
+                0x000000008021f050                __fsym___cmd_list_thread
+                0x000000008021f05c                __fsym_list_sem
+                0x000000008021f068                __fsym___cmd_list_sem
+                0x000000008021f074                __fsym_list_event
+                0x000000008021f080                __fsym___cmd_list_event
+                0x000000008021f08c                __fsym_list_mutex
+                0x000000008021f098                __fsym___cmd_list_mutex
+                0x000000008021f0a4                __fsym_list_mailbox
+                0x000000008021f0b0                __fsym___cmd_list_mailbox
+                0x000000008021f0bc                __fsym_list_msgqueue
+                0x000000008021f0c8                __fsym___cmd_list_msgqueue
+                0x000000008021f0d4                __fsym_list_mempool
+                0x000000008021f0e0                __fsym___cmd_list_mempool
+                0x000000008021f0ec                __fsym_list_timer
+                0x000000008021f0f8                __fsym___cmd_list_timer
+                0x000000008021f104                __fsym_list_device
+                0x000000008021f110                __fsym___cmd_list_device
+                0x000000008021f11c                __fsym_list
+ FSymTab        0x000000008021f128       0x24 build/kernel/components/finsh/msh_cmd.o
+                0x000000008021f128                __fsym___cmd_ps
+                0x000000008021f134                __fsym___cmd_time
+                0x000000008021f140                __fsym___cmd_free
+ FSymTab        0x000000008021f14c       0x24 build/kernel/components/finsh/msh.o
+                0x000000008021f14c                __fsym___cmd_exit
+                0x000000008021f158                __fsym_msh
+                0x000000008021f164                __fsym___cmd_help
+                0x000000008021f170                __fsymtab_end = .
+                0x000000008021f170                . = ALIGN (0x4)
+                0x000000008021f170                __vsymtab_start = .
  *(VSymTab)
- VSymTab        0x000000008021ed18       0x10 build/kernel/components/finsh/cmd.o
-                0x000000008021ed18                __vsym_dummy
-                0x000000008021ed28                __vsymtab_end = .
-                0x000000008021ed28                . = ALIGN (0x4)
-                0x000000008021ed28                . = ALIGN (0x4)
-                0x000000008021ed28                __rtmsymtab_start = .
+ VSymTab        0x000000008021f170       0x10 build/kernel/components/finsh/cmd.o
+                0x000000008021f170                __vsym_dummy
+                0x000000008021f180                __vsymtab_end = .
+                0x000000008021f180                . = ALIGN (0x4)
+                0x000000008021f180                . = ALIGN (0x4)
+                0x000000008021f180                __rtmsymtab_start = .
  *(RTMSymTab)
-                0x000000008021ed28                __rtmsymtab_end = .
-                0x000000008021ed28                . = ALIGN (0x4)
-                0x000000008021ed28                __rt_init_start = .
+                0x000000008021f180                __rtmsymtab_end = .
+                0x000000008021f180                . = ALIGN (0x4)
+                0x000000008021f180                __rt_init_start = .
  *(SORT(.rti_fn*))
- .rti_fn.0      0x000000008021ed28        0x4 build/kernel/components/init/components.o
-                0x000000008021ed28                __rt_init_rti_start
- .rti_fn.1      0x000000008021ed2c        0x4 build/bsp/drivers/serial.o
-                0x000000008021ed2c                __rt_init_rt_hw_serial_init
- .rti_fn.1      0x000000008021ed30        0x4 build/bsp/applications/board.o
-                0x000000008021ed30                __rt_init_rt_hw_timer_init
+ .rti_fn.0      0x000000008021f180        0x4 build/kernel/components/init/components.o
+                0x000000008021f180                __rt_init_rti_start
+ .rti_fn.1      0x000000008021f184        0x4 build/bsp/drivers/serial.o
+                0x000000008021f184                __rt_init_rt_hw_serial_init
+ .rti_fn.1      0x000000008021f188        0x4 build/bsp/applications/board.o
+                0x000000008021f188                __rt_init_rt_hw_timer_init
  .rti_fn.1.post
-                0x000000008021ed34        0x4 build/kernel/components/init/components.o
-                0x000000008021ed34                __rt_init_rti_board_end
- .rti_fn.3      0x000000008021ed38        0x4 build/kernel/components/finsh/shell.o
-                0x000000008021ed38                __rt_init_finsh_system_init
- .rti_fn.7      0x000000008021ed3c        0x4 build/kernel/components/init/components.o
-                0x000000008021ed3c                __rt_init_rti_end
-                0x000000008021ed40                __rt_init_end = .
-                0x000000008021ed40                __text_end = .
-                0x000000008021ed40                __rodata_start = .
+                0x000000008021f18c        0x4 build/kernel/components/init/components.o
+                0x000000008021f18c                __rt_init_rti_board_end
+ .rti_fn.3      0x000000008021f190        0x4 build/kernel/components/finsh/shell.o
+                0x000000008021f190                __rt_init_finsh_system_init
+ .rti_fn.7      0x000000008021f194        0x4 build/kernel/components/init/components.o
+                0x000000008021f194                __rt_init_rti_end
+                0x000000008021f198                __rt_init_end = .
+                0x000000008021f198                __text_end = .
+                0x000000008021f198                __rodata_start = .
 
-.glue_7         0x000000008021ed40        0x0
+.glue_7         0x000000008021f198        0x0
  .glue_7        0x0000000000000000        0x0 linker stubs
 
-.glue_7t        0x000000008021ed40        0x0
+.glue_7t        0x000000008021f198        0x0
  .glue_7t       0x0000000000000000        0x0 linker stubs
 
-.vfp11_veneer   0x000000008021ed40        0x0
+.vfp11_veneer   0x000000008021f198        0x0
  .vfp11_veneer  0x0000000000000000        0x0 linker stubs
 
-.v4_bx          0x000000008021ed40        0x0
+.v4_bx          0x000000008021f198        0x0
  .v4_bx         0x0000000000000000        0x0 linker stubs
 
-.iplt           0x000000008021ed40        0x0
+.iplt           0x000000008021f198        0x0
  .iplt          0x0000000000000000        0x0 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/crtbegin.o
 
-.rodata         0x000000008021ed40     0x225c
+.rodata         0x000000008021f198     0x225c
  *(.rodata)
- .rodata        0x000000008021ed40       0xe0 build/bsp/drivers/serial.o
- .rodata        0x000000008021ee20       0x40 build/bsp/applications/application.o
- .rodata        0x000000008021ee60       0x7c build/bsp/applications/board.o
-                0x000000008021ee94                __fsym_reboot_name
-                0x000000008021ee9c                __fsym_reboot_desc
-                0x000000008021eeac                __fsym___cmd_reboot_name
-                0x000000008021eebc                __fsym___cmd_reboot_desc
- .rodata        0x000000008021eedc      0x130 build/kernel/src/device.o
- .rodata        0x000000008021f00c       0x68 build/kernel/src/idle.o
- .rodata        0x000000008021f074      0x304 build/kernel/src/ipc.o
- .rodata        0x000000008021f378      0x1b8 build/kernel/src/kservice.o
-                0x000000008021f408                __lowest_bit_bitmap
- .rodata        0x000000008021f530      0x348 build/kernel/src/mem.o
-                0x000000008021f800                __fsym_list_mem_name
-                0x000000008021f80c                __fsym_list_mem_desc
- .rodata        0x000000008021f878       0xf0 build/kernel/src/object.o
- .rodata        0x000000008021f968       0x6c build/kernel/src/scheduler.o
- .rodata        0x000000008021f9d4      0x170 build/kernel/src/thread.o
- .rodata        0x000000008021fb44       0xc4 build/kernel/src/timer.o
- .rodata        0x000000008021fc08       0x48 build/kernel/libcpu/arm/am335x/cpu.o
- .rodata        0x000000008021fc50       0x80 build/kernel/libcpu/arm/am335x/interrupt.o
-                0x000000008021fc98                AM335X_VECTOR_BASE
- .rodata        0x000000008021fcd0      0x120 build/kernel/libcpu/arm/am335x/trap.o
- .rodata        0x000000008021fdf0       0x40 build/kernel/components/gdb/gdb_stub.o
- .rodata        0x000000008021fe30       0x50 build/kernel/components/gdb/hal_stub.o
- .rodata        0x000000008021fe80      0x12c build/kernel/components/drivers/serial/serial.o
- .rodata        0x000000008021ffac       0xd0 build/kernel/components/drivers/src/dataqueue.o
- .rodata        0x000000008022007c      0x160 build/kernel/components/finsh/shell.o
- .rodata        0x00000000802201dc      0xa10 build/kernel/components/finsh/cmd.o
-                0x00000000802201f0                __fsym_hello_name
-                0x00000000802201f8                __fsym_hello_desc
-                0x0000000080220208                __fsym_version_name
-                0x0000000080220210                __fsym_version_desc
-                0x0000000080220234                __fsym___cmd_version_name
-                0x0000000080220244                __fsym___cmd_version_desc
-                0x0000000080220360                __fsym_list_thread_name
-                0x000000008022036c                __fsym_list_thread_desc
-                0x0000000080220378                __fsym___cmd_list_thread_name
-                0x000000008022038c                __fsym___cmd_list_thread_desc
-                0x000000008022040c                __fsym_list_sem_name
-                0x0000000080220418                __fsym_list_sem_desc
-                0x0000000080220434                __fsym___cmd_list_sem_name
-                0x0000000080220444                __fsym___cmd_list_sem_desc
-                0x00000000802204d4                __fsym_list_event_name
-                0x00000000802204e0                __fsym_list_event_desc
-                0x00000000802204f8                __fsym___cmd_list_event_name
-                0x000000008022050c                __fsym___cmd_list_event_desc
-                0x000000008022058c                __fsym_list_mutex_name
-                0x0000000080220598                __fsym_list_mutex_desc
-                0x00000000802205b0                __fsym___cmd_list_mutex_name
-                0x00000000802205c4                __fsym___cmd_list_mutex_desc
-                0x0000000080220654                __fsym_list_mailbox_name
-                0x0000000080220664                __fsym_list_mailbox_desc
-                0x000000008022067c                __fsym___cmd_list_mailbox_name
-                0x0000000080220690                __fsym___cmd_list_mailbox_desc
-                0x0000000080220710                __fsym_list_msgqueue_name
-                0x0000000080220720                __fsym_list_msgqueue_desc
-                0x0000000080220740                __fsym___cmd_list_msgqueue_name
-                0x0000000080220754                __fsym___cmd_list_msgqueue_desc
-                0x0000000080220804                __fsym_list_mempool_name
-                0x0000000080220814                __fsym_list_mempool_desc
-                0x0000000080220830                __fsym___cmd_list_mempool_name
-                0x0000000080220844                __fsym___cmd_list_mempool_desc
-                0x0000000080220900                __fsym_list_timer_name
-                0x000000008022090c                __fsym_list_timer_desc
-                0x0000000080220924                __fsym___cmd_list_timer_name
-                0x0000000080220938                __fsym___cmd_list_timer_desc
-                0x0000000080220ae8                __fsym_list_device_name
-                0x0000000080220af4                __fsym_list_device_desc
-                0x0000000080220b0c                __fsym___cmd_list_device_name
-                0x0000000080220b20                __fsym___cmd_list_device_desc
-                0x0000000080220b7c                __fsym_list_name
-                0x0000000080220b84                __fsym_list_desc
-                0x0000000080220bc8                __vsym_dummy_name
-                0x0000000080220bd0                __vsym_dummy_desc
- .rodata        0x0000000080220bec       0x84 build/kernel/components/finsh/msh_cmd.o
-                0x0000000080220bec                __fsym___cmd_ps_name
-                0x0000000080220bf8                __fsym___cmd_ps_desc
-                0x0000000080220c14                __fsym___cmd_time_name
-                0x0000000080220c20                __fsym___cmd_time_desc
-                0x0000000080220c3c                __fsym___cmd_free_name
-                0x0000000080220c48                __fsym___cmd_free_desc
- .rodata        0x0000000080220c70       0xf4 build/kernel/components/finsh/msh.o
-                0x0000000080220c70                __fsym___cmd_exit_name
-                0x0000000080220c7c                __fsym___cmd_exit_desc
-                0x0000000080220c9c                __fsym_msh_name
-                0x0000000080220ca0                __fsym_msh_desc
-                0x0000000080220ce8                __fsym___cmd_help_name
-                0x0000000080220cf4                __fsym___cmd_help_desc
- .rodata        0x0000000080220d64       0xf4 build/kernel/components/finsh/finsh_error.o
- .rodata        0x0000000080220e58       0xc4 build/kernel/components/finsh/finsh_ops.o
-                0x0000000080220e58                op_table
- .rodata        0x0000000080220f1c       0x80 build/kernel/components/finsh/finsh_token.o
+ .rodata        0x000000008021f198       0xe0 build/bsp/drivers/serial.o
+ .rodata        0x000000008021f278       0x40 build/bsp/applications/application.o
+ .rodata        0x000000008021f2b8       0x7c build/bsp/applications/board.o
+                0x000000008021f2ec                __fsym_reboot_name
+                0x000000008021f2f4                __fsym_reboot_desc
+                0x000000008021f304                __fsym___cmd_reboot_name
+                0x000000008021f314                __fsym___cmd_reboot_desc
+ .rodata        0x000000008021f334      0x130 build/kernel/src/device.o
+ .rodata        0x000000008021f464       0x68 build/kernel/src/idle.o
+ .rodata        0x000000008021f4cc      0x304 build/kernel/src/ipc.o
+ .rodata        0x000000008021f7d0      0x1b8 build/kernel/src/kservice.o
+                0x000000008021f860                __lowest_bit_bitmap
+ .rodata        0x000000008021f988      0x348 build/kernel/src/mem.o
+                0x000000008021fc58                __fsym_list_mem_name
+                0x000000008021fc64                __fsym_list_mem_desc
+ .rodata        0x000000008021fcd0       0xf0 build/kernel/src/object.o
+ .rodata        0x000000008021fdc0       0x6c build/kernel/src/scheduler.o
+ .rodata        0x000000008021fe2c      0x170 build/kernel/src/thread.o
+ .rodata        0x000000008021ff9c       0xc4 build/kernel/src/timer.o
+ .rodata        0x0000000080220060       0x48 build/kernel/libcpu/arm/am335x/cpu.o
+ .rodata        0x00000000802200a8       0x80 build/kernel/libcpu/arm/am335x/interrupt.o
+                0x00000000802200f0                AM335X_VECTOR_BASE
+ .rodata        0x0000000080220128      0x120 build/kernel/libcpu/arm/am335x/trap.o
+ .rodata        0x0000000080220248       0x40 build/kernel/components/gdb/gdb_stub.o
+ .rodata        0x0000000080220288       0x50 build/kernel/components/gdb/hal_stub.o
+ .rodata        0x00000000802202d8      0x12c build/kernel/components/drivers/serial/serial.o
+ .rodata        0x0000000080220404       0xd0 build/kernel/components/drivers/src/dataqueue.o
+ .rodata        0x00000000802204d4      0x160 build/kernel/components/finsh/shell.o
+ .rodata        0x0000000080220634      0xa10 build/kernel/components/finsh/cmd.o
+                0x0000000080220648                __fsym_hello_name
+                0x0000000080220650                __fsym_hello_desc
+                0x0000000080220660                __fsym_version_name
+                0x0000000080220668                __fsym_version_desc
+                0x000000008022068c                __fsym___cmd_version_name
+                0x000000008022069c                __fsym___cmd_version_desc
+                0x00000000802207b8                __fsym_list_thread_name
+                0x00000000802207c4                __fsym_list_thread_desc
+                0x00000000802207d0                __fsym___cmd_list_thread_name
+                0x00000000802207e4                __fsym___cmd_list_thread_desc
+                0x0000000080220864                __fsym_list_sem_name
+                0x0000000080220870                __fsym_list_sem_desc
+                0x000000008022088c                __fsym___cmd_list_sem_name
+                0x000000008022089c                __fsym___cmd_list_sem_desc
+                0x000000008022092c                __fsym_list_event_name
+                0x0000000080220938                __fsym_list_event_desc
+                0x0000000080220950                __fsym___cmd_list_event_name
+                0x0000000080220964                __fsym___cmd_list_event_desc
+                0x00000000802209e4                __fsym_list_mutex_name
+                0x00000000802209f0                __fsym_list_mutex_desc
+                0x0000000080220a08                __fsym___cmd_list_mutex_name
+                0x0000000080220a1c                __fsym___cmd_list_mutex_desc
+                0x0000000080220aac                __fsym_list_mailbox_name
+                0x0000000080220abc                __fsym_list_mailbox_desc
+                0x0000000080220ad4                __fsym___cmd_list_mailbox_name
+                0x0000000080220ae8                __fsym___cmd_list_mailbox_desc
+                0x0000000080220b68                __fsym_list_msgqueue_name
+                0x0000000080220b78                __fsym_list_msgqueue_desc
+                0x0000000080220b98                __fsym___cmd_list_msgqueue_name
+                0x0000000080220bac                __fsym___cmd_list_msgqueue_desc
+                0x0000000080220c5c                __fsym_list_mempool_name
+                0x0000000080220c6c                __fsym_list_mempool_desc
+                0x0000000080220c88                __fsym___cmd_list_mempool_name
+                0x0000000080220c9c                __fsym___cmd_list_mempool_desc
+                0x0000000080220d58                __fsym_list_timer_name
+                0x0000000080220d64                __fsym_list_timer_desc
+                0x0000000080220d7c                __fsym___cmd_list_timer_name
+                0x0000000080220d90                __fsym___cmd_list_timer_desc
+                0x0000000080220f40                __fsym_list_device_name
+                0x0000000080220f4c                __fsym_list_device_desc
+                0x0000000080220f64                __fsym___cmd_list_device_name
+                0x0000000080220f78                __fsym___cmd_list_device_desc
+                0x0000000080220fd4                __fsym_list_name
+                0x0000000080220fdc                __fsym_list_desc
+                0x0000000080221020                __vsym_dummy_name
+                0x0000000080221028                __vsym_dummy_desc
+ .rodata        0x0000000080221044       0x84 build/kernel/components/finsh/msh_cmd.o
+                0x0000000080221044                __fsym___cmd_ps_name
+                0x0000000080221050                __fsym___cmd_ps_desc
+                0x000000008022106c                __fsym___cmd_time_name
+                0x0000000080221078                __fsym___cmd_time_desc
+                0x0000000080221094                __fsym___cmd_free_name
+                0x00000000802210a0                __fsym___cmd_free_desc
+ .rodata        0x00000000802210c8       0xf4 build/kernel/components/finsh/msh.o
+                0x00000000802210c8                __fsym___cmd_exit_name
+                0x00000000802210d4                __fsym___cmd_exit_desc
+                0x00000000802210f4                __fsym_msh_name
+                0x00000000802210f8                __fsym_msh_desc
+                0x0000000080221140                __fsym___cmd_help_name
+                0x000000008022114c                __fsym___cmd_help_desc
+ .rodata        0x00000000802211bc       0xf4 build/kernel/components/finsh/finsh_error.o
+ .rodata        0x00000000802212b0       0xc4 build/kernel/components/finsh/finsh_ops.o
+                0x00000000802212b0                op_table
+ .rodata        0x0000000080221374       0x80 build/kernel/components/finsh/finsh_token.o
  *(.rodata.*)
-                0x0000000080220f9c                __rodata_end = .
+                0x00000000802213f4                __rodata_end = .
 
-.rel.dyn        0x0000000080220f9c        0x0
+.rel.dyn        0x00000000802213f4        0x0
  .rel.iplt      0x0000000000000000        0x0 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/crtbegin.o
-                0x0000000080220f9c                . = ALIGN (0x4)
+                0x00000000802213f4                . = ALIGN (0x4)
 
-.ctors          0x0000000080220f9c        0x0
-                0x0000000080220f9c                PROVIDE (__ctors_start__, .)
+.ctors          0x00000000802213f4        0x0
+                0x00000000802213f4                PROVIDE (__ctors_start__, .)
  *(SORT(.ctors.*))
  *(.ctors)
-                0x0000000080220f9c                PROVIDE (__ctors_end__, .)
+                0x00000000802213f4                PROVIDE (__ctors_end__, .)
 
-.dtors          0x0000000080220f9c        0x0
-                0x0000000080220f9c                PROVIDE (__dtors_start__, .)
+.dtors          0x00000000802213f4        0x0
+                0x00000000802213f4                PROVIDE (__dtors_start__, .)
  *(SORT(.dtors.*))
  *(.dtors)
-                0x0000000080220f9c                PROVIDE (__dtors_end__, .)
-                0x0000000080220f9c                __data_start = .
-                0x0000000080220f9c                . = ALIGN (0x4)
+                0x00000000802213f4                PROVIDE (__dtors_end__, .)
+                0x00000000802213f4                __data_start = .
+                0x00000000802213f4                . = ALIGN (0x4)
 
-.data           0x0000000080220f9c      0x220
+.data           0x00000000802213f4      0x220
  *(.data)
- .data          0x0000000080220f9c       0x28 build/bsp/drivers/serial.o
-                0x0000000080220f9c                uart0
-                0x0000000080220fa4                uart1
-                0x0000000080220fac                uart2
-                0x0000000080220fb4                uart4
-                0x0000000080220fbc                uart5
- .data          0x0000000080220fc4       0x90 build/kernel/src/object.o
-                0x0000000080220fc4                rt_object_container
- .data          0x0000000080221054       0x1c build/kernel/components/gdb/arm_stub.o
-                0x0000000080221054                arch_gdb_ops
- .data          0x0000000080221070       0x10 build/kernel/components/gdb/hal_stub.o
-                0x0000000080221070                gdb_io_ops
- .data          0x0000000080221080       0x3c build/kernel/components/finsh/finsh_error.o
- .data          0x00000000802210bc      0x100 build/kernel/components/libc/minilibc/string.o
-                0x00000000802210bc                _ctype
+ .data          0x00000000802213f4       0x28 build/bsp/drivers/serial.o
+                0x00000000802213f4                uart0
+                0x00000000802213fc                uart1
+                0x0000000080221404                uart2
+                0x000000008022140c                uart4
+                0x0000000080221414                uart5
+ .data          0x000000008022141c       0x90 build/kernel/src/object.o
+                0x000000008022141c                rt_object_container
+ .data          0x00000000802214ac       0x10 build/kernel/components/gdb/hal_stub.o
+                0x00000000802214ac                gdb_io_ops
+ .data          0x00000000802214bc       0x1c build/kernel/components/gdb/libcpu/arm/arm_stub.o
+                0x00000000802214bc                arch_gdb_ops
+ .data          0x00000000802214d8       0x3c build/kernel/components/finsh/finsh_error.o
+ .data          0x0000000080221514      0x100 build/kernel/components/libc/minilibc/string.o
+                0x0000000080221514                _ctype
  *(.data.*)
-                0x00000000802211bc                __data_end = .
+                0x0000000080221614                __data_end = .
 
-.igot.plt       0x00000000802211bc        0x0
+.igot.plt       0x0000000080221614        0x0
  .igot.plt      0x0000000000000000        0x0 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/crtbegin.o
-                0x00000000802211bc                . = ALIGN (0x4)
-                0x00000000802211bc                __bss_start = __data_end
+                0x0000000080221614                . = ALIGN (0x4)
+                0x0000000080221614                __bss_start = __data_end
 
-.bss            0x00000000802211bc     0x299c
+.bss            0x0000000080221614     0x2a64
  *(.bss)
- .bss           0x00000000802211bc        0x4 build/kernel/src/clock.o
- .bss           0x00000000802211c0      0x27c build/kernel/src/idle.o
- .bss           0x000000008022143c       0x88 build/kernel/src/kservice.o
- .bss           0x00000000802214c4       0x3c build/kernel/src/mem.o
- .bss           0x0000000080221500        0x8 build/kernel/src/object.o
- .bss           0x0000000080221508        0x8 build/kernel/src/scheduler.o
- .bss           0x0000000080221510       0x10 build/kernel/src/timer.o
- .bss           0x0000000080221520        0x4 build/kernel/components/gdb/arm_stub.o
- .bss           0x0000000080221524       0x78 build/kernel/components/gdb/gdb_stub.o
- .bss           0x000000008022159c        0x8 build/kernel/components/gdb/hal_stub.o
- .bss           0x00000000802215a4     0x10fc build/kernel/components/finsh/shell.o
- .bss           0x00000000802226a0       0x10 build/kernel/components/finsh/symbol.o
-                0x00000000802226a0                _syscall_table_begin
-                0x00000000802226a4                _syscall_table_end
-                0x00000000802226a8                _sysvar_table_begin
-                0x00000000802226ac                _sysvar_table_end
- .bss           0x00000000802226b0        0x4 build/kernel/components/finsh/cmd.o
- .bss           0x00000000802226b4        0x4 build/kernel/components/finsh/msh.o
- .bss           0x00000000802226b8        0x8 build/kernel/components/finsh/finsh_heap.o
- .bss           0x00000000802226c0        0x4 build/kernel/components/finsh/finsh_vm.o
-                0x00000000802226c0                global_syscall_list
- .bss           0x00000000802226c4        0x4 build/kernel/components/libc/minilibc/string.o
+ .bss           0x0000000080221614        0x4 build/kernel/src/clock.o
+ .bss           0x0000000080221618      0x27c build/kernel/src/idle.o
+ .bss           0x0000000080221894       0x88 build/kernel/src/kservice.o
+ .bss           0x000000008022191c       0x3c build/kernel/src/mem.o
+ .bss           0x0000000080221958        0x8 build/kernel/src/object.o
+ .bss           0x0000000080221960        0x8 build/kernel/src/scheduler.o
+ .bss           0x0000000080221968       0x10 build/kernel/src/timer.o
+ .bss           0x0000000080221978      0x120 build/kernel/components/gdb/gdb_stub.o
+ .bss           0x0000000080221a98        0x8 build/kernel/components/gdb/hal_stub.o
+ .bss           0x0000000080221aa0        0x4 build/kernel/components/gdb/libcpu/arm/arm_stub.o
+ .bss           0x0000000080221aa4     0x10fc build/kernel/components/finsh/shell.o
+ .bss           0x0000000080222ba0       0x10 build/kernel/components/finsh/symbol.o
+                0x0000000080222ba0                _syscall_table_begin
+                0x0000000080222ba4                _syscall_table_end
+                0x0000000080222ba8                _sysvar_table_begin
+                0x0000000080222bac                _sysvar_table_end
+ .bss           0x0000000080222bb0        0x4 build/kernel/components/finsh/cmd.o
+ .bss           0x0000000080222bb4        0x4 build/kernel/components/finsh/msh.o
+ .bss           0x0000000080222bb8        0x8 build/kernel/components/finsh/finsh_heap.o
+ .bss           0x0000000080222bc0        0x4 build/kernel/components/finsh/finsh_vm.o
+                0x0000000080222bc0                global_syscall_list
+ .bss           0x0000000080222bc4        0x4 build/kernel/components/libc/minilibc/string.o
  *(.bss.*)
  *(COMMON)
- COMMON         0x00000000802226c8      0x3ac build/bsp/drivers/serial.o
-                0x00000000802226c8                serial5
-                0x0000000080222740                uart4_int_rx
-                0x0000000080222784                serial0
-                0x00000000802227fc                uart0_int_rx
-                0x0000000080222840                serial1
-                0x00000000802228b8                serial4
-                0x0000000080222930                uart2_int_rx
-                0x0000000080222974                uart5_int_rx
-                0x00000000802229b8                uart1_int_rx
-                0x00000000802229fc                serial2
- COMMON         0x0000000080222a74        0x4 build/bsp/applications/application.o
-                0x0000000080222a74                gdb_connected
- COMMON         0x0000000080222a78        0x1 build/kernel/src/irq.o
-                0x0000000080222a78                rt_interrupt_nest
- *fill*         0x0000000080222a79        0x3 
- COMMON         0x0000000080222a7c        0xc build/kernel/src/object.o
-                0x0000000080222a7c                rt_object_put_hook
-                0x0000000080222a80                rt_object_take_hook
-                0x0000000080222a84                rt_object_trytake_hook
- COMMON         0x0000000080222a88      0x114 build/kernel/src/scheduler.o
-                0x0000000080222a88                rt_thread_priority_table
-                0x0000000080222b88                rt_current_priority
-                0x0000000080222b8c                rt_current_thread
-                0x0000000080222b90                rt_thread_ready_priority_group
-                0x0000000080222b94                rt_thread_defunct
- COMMON         0x0000000080222b9c      0xa0c build/kernel/libcpu/arm/am335x/interrupt.o
-                0x0000000080222b9c                rt_interrupt_to_thread
-                0x0000000080222ba0                rt_interrupt_from_thread
-                0x0000000080222ba4                rt_thread_switch_interrupt_flag
-                0x0000000080222ba8                isr_table
- COMMON         0x00000000802235a8        0x4 build/kernel/components/gdb/arm_stub.o
-                0x00000000802235a8                regs
- COMMON         0x00000000802235ac      0x190 build/kernel/components/gdb/gdb_stub.o
-                0x00000000802235ac                remcom_in_buffer
-                0x0000000080223674                remcom_out_buffer
- COMMON         0x000000008022373c        0x4 build/kernel/components/finsh/shell.o
-                0x000000008022373c                shell
- COMMON         0x0000000080223740        0x8 build/kernel/components/finsh/finsh_compiler.o
-                0x0000000080223740                finsh_compile_pc
-                0x0000000080223744                finsh_compile_sp
- COMMON         0x0000000080223748        0x1 build/kernel/components/finsh/finsh_error.o
-                0x0000000080223748                global_errno
- *fill*         0x0000000080223749        0x3 
- COMMON         0x000000008022374c       0x80 build/kernel/components/finsh/finsh_heap.o
-                0x000000008022374c                finsh_heap
- COMMON         0x00000000802237cc      0x140 build/kernel/components/finsh/finsh_node.o
-                0x00000000802237cc                global_node_table
- COMMON         0x000000008022390c       0xc4 build/kernel/components/finsh/finsh_var.o
-                0x000000008022390c                global_sysvar_list
-                0x0000000080223910                global_variable
- COMMON         0x00000000802239d0      0x188 build/kernel/components/finsh/finsh_vm.o
-                0x00000000802239d0                text_segment
-                0x0000000080223a50                finsh_vm_stack
-                0x0000000080223b50                finsh_pc
-                0x0000000080223b54                finsh_sp
-                0x0000000080223b58                . = ALIGN (0x4)
-                0x0000000080223b58                . = ALIGN (0x4)
-                0x0000000080223b58                __bss_end = .
+ COMMON         0x0000000080222bc8      0x3ac build/bsp/drivers/serial.o
+                0x0000000080222bc8                serial5
+                0x0000000080222c40                uart4_int_rx
+                0x0000000080222c84                serial0
+                0x0000000080222cfc                uart0_int_rx
+                0x0000000080222d40                serial1
+                0x0000000080222db8                serial4
+                0x0000000080222e30                uart2_int_rx
+                0x0000000080222e74                uart5_int_rx
+                0x0000000080222eb8                uart1_int_rx
+                0x0000000080222efc                serial2
+ COMMON         0x0000000080222f74        0x4 build/bsp/applications/application.o
+                0x0000000080222f74                gdb_connected
+ COMMON         0x0000000080222f78        0x1 build/kernel/src/irq.o
+                0x0000000080222f78                rt_interrupt_nest
+ *fill*         0x0000000080222f79        0x3 
+ COMMON         0x0000000080222f7c        0xc build/kernel/src/object.o
+                0x0000000080222f7c                rt_object_put_hook
+                0x0000000080222f80                rt_object_take_hook
+                0x0000000080222f84                rt_object_trytake_hook
+ COMMON         0x0000000080222f88      0x114 build/kernel/src/scheduler.o
+                0x0000000080222f88                rt_thread_priority_table
+                0x0000000080223088                rt_current_priority
+                0x000000008022308c                rt_current_thread
+                0x0000000080223090                rt_thread_ready_priority_group
+                0x0000000080223094                rt_thread_defunct
+ COMMON         0x000000008022309c      0xa0c build/kernel/libcpu/arm/am335x/interrupt.o
+                0x000000008022309c                rt_interrupt_to_thread
+                0x00000000802230a0                rt_interrupt_from_thread
+                0x00000000802230a4                rt_thread_switch_interrupt_flag
+                0x00000000802230a8                isr_table
+ COMMON         0x0000000080223aa8      0x1b0 build/kernel/components/gdb/gdb_stub.o
+                0x0000000080223aa8                gs
+                0x0000000080223ac8                remcom_in_buffer
+                0x0000000080223b90                remcom_out_buffer
+ COMMON         0x0000000080223c58        0x4 build/kernel/components/gdb/libcpu/arm/arm_stub.o
+                0x0000000080223c58                regs
+ COMMON         0x0000000080223c5c        0x4 build/kernel/components/finsh/shell.o
+                0x0000000080223c5c                shell
+ COMMON         0x0000000080223c60        0x8 build/kernel/components/finsh/finsh_compiler.o
+                0x0000000080223c60                finsh_compile_pc
+                0x0000000080223c64                finsh_compile_sp
+ COMMON         0x0000000080223c68        0x1 build/kernel/components/finsh/finsh_error.o
+                0x0000000080223c68                global_errno
+ *fill*         0x0000000080223c69        0x3 
+ COMMON         0x0000000080223c6c       0x80 build/kernel/components/finsh/finsh_heap.o
+                0x0000000080223c6c                finsh_heap
+ COMMON         0x0000000080223cec      0x140 build/kernel/components/finsh/finsh_node.o
+                0x0000000080223cec                global_node_table
+ COMMON         0x0000000080223e2c       0xc4 build/kernel/components/finsh/finsh_var.o
+                0x0000000080223e2c                global_sysvar_list
+                0x0000000080223e30                global_variable
+ COMMON         0x0000000080223ef0      0x188 build/kernel/components/finsh/finsh_vm.o
+                0x0000000080223ef0                text_segment
+                0x0000000080223f70                finsh_vm_stack
+                0x0000000080224070                finsh_pc
+                0x0000000080224074                finsh_sp
+                0x0000000080224078                . = ALIGN (0x4)
+                0x0000000080224078                . = ALIGN (0x4)
+                0x0000000080224078                __bss_end = .
 
 .stab
  *(.stab)
@@ -1595,9 +1597,9 @@ LOAD /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/crtn.o
  .comment       0x0000000000000000       0x20 build/kernel/libcpu/arm/am335x/interrupt.o
  .comment       0x0000000000000000       0x20 build/kernel/libcpu/arm/am335x/stack.o
  .comment       0x0000000000000000       0x20 build/kernel/libcpu/arm/am335x/trap.o
- .comment       0x0000000000000000       0x20 build/kernel/components/gdb/arm_stub.o
  .comment       0x0000000000000000       0x20 build/kernel/components/gdb/gdb_stub.o
  .comment       0x0000000000000000       0x20 build/kernel/components/gdb/hal_stub.o
+ .comment       0x0000000000000000       0x20 build/kernel/components/gdb/libcpu/arm/arm_stub.o
  .comment       0x0000000000000000       0x20 build/kernel/components/drivers/serial/serial.o
  .comment       0x0000000000000000       0x20 build/kernel/components/drivers/src/dataqueue.o
  .comment       0x0000000000000000       0x20 build/kernel/components/finsh/shell.o
@@ -1670,11 +1672,11 @@ OUTPUT(rtthread-beaglebone.elf elf32-littlearm)
  .ARM.attributes
                 0x00000000000003da       0x1f build/kernel/libcpu/arm/am335x/vector_gcc.o
  .ARM.attributes
-                0x00000000000003f9       0x2f build/kernel/components/gdb/arm_stub.o
+                0x00000000000003f9       0x2f build/kernel/components/gdb/gdb_stub.o
  .ARM.attributes
-                0x0000000000000428       0x2f build/kernel/components/gdb/gdb_stub.o
+                0x0000000000000428       0x2f build/kernel/components/gdb/hal_stub.o
  .ARM.attributes
-                0x0000000000000457       0x2f build/kernel/components/gdb/hal_stub.o
+                0x0000000000000457       0x2f build/kernel/components/gdb/libcpu/arm/arm_stub.o
  .ARM.attributes
                 0x0000000000000486       0x2f build/kernel/components/drivers/serial/serial.o
  .ARM.attributes
@@ -1722,7 +1724,7 @@ OUTPUT(rtthread-beaglebone.elf elf32-littlearm)
  .ARM.attributes
                 0x0000000000000868       0x1b /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_dvmd_tls.o)
 
-.debug_info     0x0000000000000000    0x13843
+.debug_info     0x0000000000000000    0x1396f
  .debug_info    0x0000000000000000      0xc8f build/bsp/drivers/serial.o
  .debug_info    0x0000000000000c8f      0x3b8 build/bsp/applications/application.o
  .debug_info    0x0000000000001047      0x2bf build/bsp/applications/board.o
@@ -1741,39 +1743,39 @@ OUTPUT(rtthread-beaglebone.elf elf32-littlearm)
  .debug_info    0x00000000000086ec      0x1ec build/kernel/libcpu/arm/am335x/cpu.o
  .debug_info    0x00000000000088d8      0x3f0 build/kernel/libcpu/arm/am335x/interrupt.o
  .debug_info    0x0000000000008cc8       0xea build/kernel/libcpu/arm/am335x/stack.o
- .debug_info    0x0000000000008db2      0x672 build/kernel/libcpu/arm/am335x/trap.o
- .debug_info    0x0000000000009424       0x7f build/kernel/libcpu/arm/am335x/context_gcc.o
- .debug_info    0x00000000000094a3       0x7c build/kernel/libcpu/arm/am335x/cp15_gcc.o
- .debug_info    0x000000000000951f       0x7d build/kernel/libcpu/arm/am335x/start_gcc.o
- .debug_info    0x000000000000959c       0x7e build/kernel/libcpu/arm/am335x/vector_gcc.o
- .debug_info    0x000000000000961a      0x35b build/kernel/components/gdb/arm_stub.o
- .debug_info    0x0000000000009975      0xa7e build/kernel/components/gdb/gdb_stub.o
- .debug_info    0x000000000000a3f3      0x810 build/kernel/components/gdb/hal_stub.o
- .debug_info    0x000000000000ac03      0xd86 build/kernel/components/drivers/serial/serial.o
- .debug_info    0x000000000000b989      0x8a3 build/kernel/components/drivers/src/dataqueue.o
- .debug_info    0x000000000000c22c      0xfaa build/kernel/components/finsh/shell.o
- .debug_info    0x000000000000d1d6      0x16c build/kernel/components/finsh/symbol.o
- .debug_info    0x000000000000d342     0x1892 build/kernel/components/finsh/cmd.o
- .debug_info    0x000000000000ebd4      0x2ad build/kernel/components/finsh/msh_cmd.o
- .debug_info    0x000000000000ee81      0x60d build/kernel/components/finsh/msh.o
- .debug_info    0x000000000000f48e      0x584 build/kernel/components/finsh/finsh_compiler.o
- .debug_info    0x000000000000fa12      0x147 build/kernel/components/finsh/finsh_error.o
- .debug_info    0x000000000000fb59      0x420 build/kernel/components/finsh/finsh_heap.o
- .debug_info    0x000000000000ff79      0x49e build/kernel/components/finsh/finsh_init.o
- .debug_info    0x0000000000010417      0x499 build/kernel/components/finsh/finsh_node.o
- .debug_info    0x00000000000108b0      0x633 build/kernel/components/finsh/finsh_ops.o
- .debug_info    0x0000000000010ee3      0xc05 build/kernel/components/finsh/finsh_parser.o
- .debug_info    0x0000000000011ae8      0x3c2 build/kernel/components/finsh/finsh_var.o
- .debug_info    0x0000000000011eaa      0x2d4 build/kernel/components/finsh/finsh_vm.o
- .debug_info    0x000000000001217e      0x6ce build/kernel/components/finsh/finsh_token.o
- .debug_info    0x000000000001284c      0x1e5 build/kernel/components/libc/minilibc/stdlib.o
- .debug_info    0x0000000000012a31      0xa9f build/kernel/components/libc/minilibc/string.o
- .debug_info    0x00000000000134d0      0x15a build/kernel/components/init/components.o
- .debug_info    0x000000000001362a       0xb3 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_udivsi3.o)
- .debug_info    0x00000000000136dd       0xb3 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_divsi3.o)
- .debug_info    0x0000000000013790       0xb3 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_dvmd_tls.o)
+ .debug_info    0x0000000000008db2      0x663 build/kernel/libcpu/arm/am335x/trap.o
+ .debug_info    0x0000000000009415       0x7f build/kernel/libcpu/arm/am335x/context_gcc.o
+ .debug_info    0x0000000000009494       0x7c build/kernel/libcpu/arm/am335x/cp15_gcc.o
+ .debug_info    0x0000000000009510       0x7d build/kernel/libcpu/arm/am335x/start_gcc.o
+ .debug_info    0x000000000000958d       0x7e build/kernel/libcpu/arm/am335x/vector_gcc.o
+ .debug_info    0x000000000000960b      0xb41 build/kernel/components/gdb/gdb_stub.o
+ .debug_info    0x000000000000a14c      0x815 build/kernel/components/gdb/hal_stub.o
+ .debug_info    0x000000000000a961      0x3ce build/kernel/components/gdb/libcpu/arm/arm_stub.o
+ .debug_info    0x000000000000ad2f      0xd86 build/kernel/components/drivers/serial/serial.o
+ .debug_info    0x000000000000bab5      0x8a3 build/kernel/components/drivers/src/dataqueue.o
+ .debug_info    0x000000000000c358      0xfaa build/kernel/components/finsh/shell.o
+ .debug_info    0x000000000000d302      0x16c build/kernel/components/finsh/symbol.o
+ .debug_info    0x000000000000d46e     0x1892 build/kernel/components/finsh/cmd.o
+ .debug_info    0x000000000000ed00      0x2ad build/kernel/components/finsh/msh_cmd.o
+ .debug_info    0x000000000000efad      0x60d build/kernel/components/finsh/msh.o
+ .debug_info    0x000000000000f5ba      0x584 build/kernel/components/finsh/finsh_compiler.o
+ .debug_info    0x000000000000fb3e      0x147 build/kernel/components/finsh/finsh_error.o
+ .debug_info    0x000000000000fc85      0x420 build/kernel/components/finsh/finsh_heap.o
+ .debug_info    0x00000000000100a5      0x49e build/kernel/components/finsh/finsh_init.o
+ .debug_info    0x0000000000010543      0x499 build/kernel/components/finsh/finsh_node.o
+ .debug_info    0x00000000000109dc      0x633 build/kernel/components/finsh/finsh_ops.o
+ .debug_info    0x000000000001100f      0xc05 build/kernel/components/finsh/finsh_parser.o
+ .debug_info    0x0000000000011c14      0x3c2 build/kernel/components/finsh/finsh_var.o
+ .debug_info    0x0000000000011fd6      0x2d4 build/kernel/components/finsh/finsh_vm.o
+ .debug_info    0x00000000000122aa      0x6ce build/kernel/components/finsh/finsh_token.o
+ .debug_info    0x0000000000012978      0x1e5 build/kernel/components/libc/minilibc/stdlib.o
+ .debug_info    0x0000000000012b5d      0xa9f build/kernel/components/libc/minilibc/string.o
+ .debug_info    0x00000000000135fc      0x15a build/kernel/components/init/components.o
+ .debug_info    0x0000000000013756       0xb3 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_udivsi3.o)
+ .debug_info    0x0000000000013809       0xb3 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_divsi3.o)
+ .debug_info    0x00000000000138bc       0xb3 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_dvmd_tls.o)
 
-.debug_abbrev   0x0000000000000000     0x45b9
+.debug_abbrev   0x0000000000000000     0x45ce
  .debug_abbrev  0x0000000000000000      0x22e build/bsp/drivers/serial.o
  .debug_abbrev  0x000000000000022e      0x106 build/bsp/applications/application.o
  .debug_abbrev  0x0000000000000334      0x15f build/bsp/applications/board.o
@@ -1792,39 +1794,39 @@ OUTPUT(rtthread-beaglebone.elf elf32-littlearm)
  .debug_abbrev  0x00000000000019a8      0x118 build/kernel/libcpu/arm/am335x/cpu.o
  .debug_abbrev  0x0000000000001ac0      0x180 build/kernel/libcpu/arm/am335x/interrupt.o
  .debug_abbrev  0x0000000000001c40       0x7f build/kernel/libcpu/arm/am335x/stack.o
- .debug_abbrev  0x0000000000001cbf      0x15d build/kernel/libcpu/arm/am335x/trap.o
- .debug_abbrev  0x0000000000001e1c       0x14 build/kernel/libcpu/arm/am335x/context_gcc.o
- .debug_abbrev  0x0000000000001e30       0x14 build/kernel/libcpu/arm/am335x/cp15_gcc.o
- .debug_abbrev  0x0000000000001e44       0x14 build/kernel/libcpu/arm/am335x/start_gcc.o
- .debug_abbrev  0x0000000000001e58       0x14 build/kernel/libcpu/arm/am335x/vector_gcc.o
- .debug_abbrev  0x0000000000001e6c      0x13a build/kernel/components/gdb/arm_stub.o
- .debug_abbrev  0x0000000000001fa6      0x2bc build/kernel/components/gdb/gdb_stub.o
- .debug_abbrev  0x0000000000002262      0x1db build/kernel/components/gdb/hal_stub.o
- .debug_abbrev  0x000000000000243d      0x248 build/kernel/components/drivers/serial/serial.o
- .debug_abbrev  0x0000000000002685      0x1de build/kernel/components/drivers/src/dataqueue.o
- .debug_abbrev  0x0000000000002863      0x32f build/kernel/components/finsh/shell.o
- .debug_abbrev  0x0000000000002b92       0x96 build/kernel/components/finsh/symbol.o
- .debug_abbrev  0x0000000000002c28      0x2bb build/kernel/components/finsh/cmd.o
- .debug_abbrev  0x0000000000002ee3      0x101 build/kernel/components/finsh/msh_cmd.o
- .debug_abbrev  0x0000000000002fe4      0x245 build/kernel/components/finsh/msh.o
- .debug_abbrev  0x0000000000003229      0x22d build/kernel/components/finsh/finsh_compiler.o
- .debug_abbrev  0x0000000000003456       0xbe build/kernel/components/finsh/finsh_error.o
- .debug_abbrev  0x0000000000003514      0x199 build/kernel/components/finsh/finsh_heap.o
- .debug_abbrev  0x00000000000036ad      0x17b build/kernel/components/finsh/finsh_init.o
- .debug_abbrev  0x0000000000003828      0x1b5 build/kernel/components/finsh/finsh_node.o
- .debug_abbrev  0x00000000000039dd      0x15d build/kernel/components/finsh/finsh_ops.o
- .debug_abbrev  0x0000000000003b3a      0x22f build/kernel/components/finsh/finsh_parser.o
- .debug_abbrev  0x0000000000003d69      0x16b build/kernel/components/finsh/finsh_var.o
- .debug_abbrev  0x0000000000003ed4      0x146 build/kernel/components/finsh/finsh_vm.o
- .debug_abbrev  0x000000000000401a      0x223 build/kernel/components/finsh/finsh_token.o
- .debug_abbrev  0x000000000000423d       0xf6 build/kernel/components/libc/minilibc/stdlib.o
- .debug_abbrev  0x0000000000004333      0x1a8 build/kernel/components/libc/minilibc/string.o
- .debug_abbrev  0x00000000000044db       0xa2 build/kernel/components/init/components.o
- .debug_abbrev  0x000000000000457d       0x14 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_udivsi3.o)
- .debug_abbrev  0x0000000000004591       0x14 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_divsi3.o)
- .debug_abbrev  0x00000000000045a5       0x14 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_dvmd_tls.o)
+ .debug_abbrev  0x0000000000001cbf      0x147 build/kernel/libcpu/arm/am335x/trap.o
+ .debug_abbrev  0x0000000000001e06       0x14 build/kernel/libcpu/arm/am335x/context_gcc.o
+ .debug_abbrev  0x0000000000001e1a       0x14 build/kernel/libcpu/arm/am335x/cp15_gcc.o
+ .debug_abbrev  0x0000000000001e2e       0x14 build/kernel/libcpu/arm/am335x/start_gcc.o
+ .debug_abbrev  0x0000000000001e42       0x14 build/kernel/libcpu/arm/am335x/vector_gcc.o
+ .debug_abbrev  0x0000000000001e56      0x2ee build/kernel/components/gdb/gdb_stub.o
+ .debug_abbrev  0x0000000000002144      0x1d4 build/kernel/components/gdb/hal_stub.o
+ .debug_abbrev  0x0000000000002318      0x13a build/kernel/components/gdb/libcpu/arm/arm_stub.o
+ .debug_abbrev  0x0000000000002452      0x248 build/kernel/components/drivers/serial/serial.o
+ .debug_abbrev  0x000000000000269a      0x1de build/kernel/components/drivers/src/dataqueue.o
+ .debug_abbrev  0x0000000000002878      0x32f build/kernel/components/finsh/shell.o
+ .debug_abbrev  0x0000000000002ba7       0x96 build/kernel/components/finsh/symbol.o
+ .debug_abbrev  0x0000000000002c3d      0x2bb build/kernel/components/finsh/cmd.o
+ .debug_abbrev  0x0000000000002ef8      0x101 build/kernel/components/finsh/msh_cmd.o
+ .debug_abbrev  0x0000000000002ff9      0x245 build/kernel/components/finsh/msh.o
+ .debug_abbrev  0x000000000000323e      0x22d build/kernel/components/finsh/finsh_compiler.o
+ .debug_abbrev  0x000000000000346b       0xbe build/kernel/components/finsh/finsh_error.o
+ .debug_abbrev  0x0000000000003529      0x199 build/kernel/components/finsh/finsh_heap.o
+ .debug_abbrev  0x00000000000036c2      0x17b build/kernel/components/finsh/finsh_init.o
+ .debug_abbrev  0x000000000000383d      0x1b5 build/kernel/components/finsh/finsh_node.o
+ .debug_abbrev  0x00000000000039f2      0x15d build/kernel/components/finsh/finsh_ops.o
+ .debug_abbrev  0x0000000000003b4f      0x22f build/kernel/components/finsh/finsh_parser.o
+ .debug_abbrev  0x0000000000003d7e      0x16b build/kernel/components/finsh/finsh_var.o
+ .debug_abbrev  0x0000000000003ee9      0x146 build/kernel/components/finsh/finsh_vm.o
+ .debug_abbrev  0x000000000000402f      0x223 build/kernel/components/finsh/finsh_token.o
+ .debug_abbrev  0x0000000000004252       0xf6 build/kernel/components/libc/minilibc/stdlib.o
+ .debug_abbrev  0x0000000000004348      0x1a8 build/kernel/components/libc/minilibc/string.o
+ .debug_abbrev  0x00000000000044f0       0xa2 build/kernel/components/init/components.o
+ .debug_abbrev  0x0000000000004592       0x14 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_udivsi3.o)
+ .debug_abbrev  0x00000000000045a6       0x14 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_divsi3.o)
+ .debug_abbrev  0x00000000000045ba       0x14 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_dvmd_tls.o)
 
-.debug_loc      0x0000000000000000     0x5570
+.debug_loc      0x0000000000000000     0x559c
  .debug_loc     0x0000000000000000      0x1e4 build/bsp/drivers/serial.o
  .debug_loc     0x00000000000001e4       0x58 build/bsp/applications/application.o
  .debug_loc     0x000000000000023c       0xdc build/bsp/applications/board.o
@@ -1844,28 +1846,28 @@ OUTPUT(rtthread-beaglebone.elf elf32-littlearm)
  .debug_loc     0x0000000000002410      0x210 build/kernel/libcpu/arm/am335x/interrupt.o
  .debug_loc     0x0000000000002620       0x2c build/kernel/libcpu/arm/am335x/stack.o
  .debug_loc     0x000000000000264c      0x134 build/kernel/libcpu/arm/am335x/trap.o
- .debug_loc     0x0000000000002780       0xdc build/kernel/components/gdb/arm_stub.o
- .debug_loc     0x000000000000285c      0x4d0 build/kernel/components/gdb/gdb_stub.o
- .debug_loc     0x0000000000002d2c       0xb0 build/kernel/components/gdb/hal_stub.o
- .debug_loc     0x0000000000002ddc      0x268 build/kernel/components/drivers/serial/serial.o
- .debug_loc     0x0000000000003044      0x160 build/kernel/components/drivers/src/dataqueue.o
- .debug_loc     0x00000000000031a4      0x268 build/kernel/components/finsh/shell.o
- .debug_loc     0x000000000000340c      0x4a4 build/kernel/components/finsh/cmd.o
- .debug_loc     0x00000000000038b0       0x84 build/kernel/components/finsh/msh_cmd.o
- .debug_loc     0x0000000000003934      0x1b8 build/kernel/components/finsh/msh.o
- .debug_loc     0x0000000000003aec       0x84 build/kernel/components/finsh/finsh_compiler.o
- .debug_loc     0x0000000000003b70       0xb0 build/kernel/components/finsh/finsh_error.o
- .debug_loc     0x0000000000003c20      0x160 build/kernel/components/finsh/finsh_heap.o
- .debug_loc     0x0000000000003d80       0xb0 build/kernel/components/finsh/finsh_init.o
- .debug_loc     0x0000000000003e30      0x160 build/kernel/components/finsh/finsh_node.o
- .debug_loc     0x0000000000003f90      0x840 build/kernel/components/finsh/finsh_ops.o
- .debug_loc     0x00000000000047d0      0x370 build/kernel/components/finsh/finsh_parser.o
- .debug_loc     0x0000000000004b40      0x108 build/kernel/components/finsh/finsh_var.o
- .debug_loc     0x0000000000004c48       0x84 build/kernel/components/finsh/finsh_vm.o
- .debug_loc     0x0000000000004ccc      0x268 build/kernel/components/finsh/finsh_token.o
- .debug_loc     0x0000000000004f34      0x108 build/kernel/components/libc/minilibc/stdlib.o
- .debug_loc     0x000000000000503c      0x458 build/kernel/components/libc/minilibc/string.o
- .debug_loc     0x0000000000005494       0xdc build/kernel/components/init/components.o
+ .debug_loc     0x0000000000002780      0x4fc build/kernel/components/gdb/gdb_stub.o
+ .debug_loc     0x0000000000002c7c       0xb0 build/kernel/components/gdb/hal_stub.o
+ .debug_loc     0x0000000000002d2c       0xdc build/kernel/components/gdb/libcpu/arm/arm_stub.o
+ .debug_loc     0x0000000000002e08      0x268 build/kernel/components/drivers/serial/serial.o
+ .debug_loc     0x0000000000003070      0x160 build/kernel/components/drivers/src/dataqueue.o
+ .debug_loc     0x00000000000031d0      0x268 build/kernel/components/finsh/shell.o
+ .debug_loc     0x0000000000003438      0x4a4 build/kernel/components/finsh/cmd.o
+ .debug_loc     0x00000000000038dc       0x84 build/kernel/components/finsh/msh_cmd.o
+ .debug_loc     0x0000000000003960      0x1b8 build/kernel/components/finsh/msh.o
+ .debug_loc     0x0000000000003b18       0x84 build/kernel/components/finsh/finsh_compiler.o
+ .debug_loc     0x0000000000003b9c       0xb0 build/kernel/components/finsh/finsh_error.o
+ .debug_loc     0x0000000000003c4c      0x160 build/kernel/components/finsh/finsh_heap.o
+ .debug_loc     0x0000000000003dac       0xb0 build/kernel/components/finsh/finsh_init.o
+ .debug_loc     0x0000000000003e5c      0x160 build/kernel/components/finsh/finsh_node.o
+ .debug_loc     0x0000000000003fbc      0x840 build/kernel/components/finsh/finsh_ops.o
+ .debug_loc     0x00000000000047fc      0x370 build/kernel/components/finsh/finsh_parser.o
+ .debug_loc     0x0000000000004b6c      0x108 build/kernel/components/finsh/finsh_var.o
+ .debug_loc     0x0000000000004c74       0x84 build/kernel/components/finsh/finsh_vm.o
+ .debug_loc     0x0000000000004cf8      0x268 build/kernel/components/finsh/finsh_token.o
+ .debug_loc     0x0000000000004f60      0x108 build/kernel/components/libc/minilibc/stdlib.o
+ .debug_loc     0x0000000000005068      0x458 build/kernel/components/libc/minilibc/string.o
+ .debug_loc     0x00000000000054c0       0xdc build/kernel/components/init/components.o
 
 .debug_aranges  0x0000000000000000      0x618
  .debug_aranges
@@ -1915,11 +1917,11 @@ OUTPUT(rtthread-beaglebone.elf elf32-littlearm)
  .debug_aranges
                 0x00000000000002c0       0x20 build/kernel/libcpu/arm/am335x/vector_gcc.o
  .debug_aranges
-                0x00000000000002e0       0x20 build/kernel/components/gdb/arm_stub.o
+                0x00000000000002e0       0x20 build/kernel/components/gdb/gdb_stub.o
  .debug_aranges
-                0x0000000000000300       0x20 build/kernel/components/gdb/gdb_stub.o
+                0x0000000000000300       0x20 build/kernel/components/gdb/hal_stub.o
  .debug_aranges
-                0x0000000000000320       0x20 build/kernel/components/gdb/hal_stub.o
+                0x0000000000000320       0x20 build/kernel/components/gdb/libcpu/arm/arm_stub.o
  .debug_aranges
                 0x0000000000000340       0x20 build/kernel/components/drivers/serial/serial.o
  .debug_aranges
@@ -1967,144 +1969,144 @@ OUTPUT(rtthread-beaglebone.elf elf32-littlearm)
  .debug_aranges
                 0x00000000000005f8       0x20 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_dvmd_tls.o)
 
-.debug_line     0x0000000000000000     0x52a5
+.debug_line     0x0000000000000000     0x5326
  .debug_line    0x0000000000000000      0x246 build/bsp/drivers/serial.o
- .debug_line    0x0000000000000246       0x9d build/bsp/applications/application.o
- .debug_line    0x00000000000002e3      0x111 build/bsp/applications/board.o
- .debug_line    0x00000000000003f4       0x63 build/bsp/applications/startup.o
- .debug_line    0x0000000000000457       0x92 build/kernel/src/clock.o
- .debug_line    0x00000000000004e9      0x19b build/kernel/src/device.o
- .debug_line    0x0000000000000684       0xdd build/kernel/src/idle.o
- .debug_line    0x0000000000000761      0x783 build/kernel/src/ipc.o
- .debug_line    0x0000000000000ee4       0x88 build/kernel/src/irq.o
- .debug_line    0x0000000000000f6c      0x41e build/kernel/src/kservice.o
- .debug_line    0x000000000000138a      0x29a build/kernel/src/mem.o
- .debug_line    0x0000000000001624      0x176 build/kernel/src/object.o
- .debug_line    0x000000000000179a      0x12a build/kernel/src/scheduler.o
- .debug_line    0x00000000000018c4      0x20b build/kernel/src/thread.o
- .debug_line    0x0000000000001acf      0x217 build/kernel/src/timer.o
- .debug_line    0x0000000000001ce6       0xb0 build/kernel/libcpu/arm/am335x/cpu.o
- .debug_line    0x0000000000001d96      0x11d build/kernel/libcpu/arm/am335x/interrupt.o
- .debug_line    0x0000000000001eb3       0x9b build/kernel/libcpu/arm/am335x/stack.o
- .debug_line    0x0000000000001f4e       0xf3 build/kernel/libcpu/arm/am335x/trap.o
- .debug_line    0x0000000000002041       0x8d build/kernel/libcpu/arm/am335x/context_gcc.o
- .debug_line    0x00000000000020ce       0xaf build/kernel/libcpu/arm/am335x/cp15_gcc.o
- .debug_line    0x000000000000217d       0xde build/kernel/libcpu/arm/am335x/start_gcc.o
- .debug_line    0x000000000000225b       0x6a build/kernel/libcpu/arm/am335x/vector_gcc.o
- .debug_line    0x00000000000022c5       0xdc build/kernel/components/gdb/arm_stub.o
- .debug_line    0x00000000000023a1      0x2ce build/kernel/components/gdb/gdb_stub.o
- .debug_line    0x000000000000266f      0x13b build/kernel/components/gdb/hal_stub.o
- .debug_line    0x00000000000027aa      0x248 build/kernel/components/drivers/serial/serial.o
- .debug_line    0x00000000000029f2      0x222 build/kernel/components/drivers/src/dataqueue.o
- .debug_line    0x0000000000002c14      0x2b3 build/kernel/components/finsh/shell.o
- .debug_line    0x0000000000002ec7       0xbf build/kernel/components/finsh/symbol.o
- .debug_line    0x0000000000002f86      0x393 build/kernel/components/finsh/cmd.o
- .debug_line    0x0000000000003319       0x75 build/kernel/components/finsh/msh_cmd.o
- .debug_line    0x000000000000338e      0x1f2 build/kernel/components/finsh/msh.o
- .debug_line    0x0000000000003580      0x4ea build/kernel/components/finsh/finsh_compiler.o
- .debug_line    0x0000000000003a6a       0xd5 build/kernel/components/finsh/finsh_error.o
- .debug_line    0x0000000000003b3f      0x1c4 build/kernel/components/finsh/finsh_heap.o
- .debug_line    0x0000000000003d03      0x106 build/kernel/components/finsh/finsh_init.o
- .debug_line    0x0000000000003e09      0x152 build/kernel/components/finsh/finsh_node.o
- .debug_line    0x0000000000003f5b      0x24f build/kernel/components/finsh/finsh_ops.o
- .debug_line    0x00000000000041aa      0x3a7 build/kernel/components/finsh/finsh_parser.o
- .debug_line    0x0000000000004551      0x16b build/kernel/components/finsh/finsh_var.o
- .debug_line    0x00000000000046bc      0x134 build/kernel/components/finsh/finsh_vm.o
- .debug_line    0x00000000000047f0      0x331 build/kernel/components/finsh/finsh_token.o
- .debug_line    0x0000000000004b21      0x13d build/kernel/components/libc/minilibc/stdlib.o
- .debug_line    0x0000000000004c5e      0x3f2 build/kernel/components/libc/minilibc/string.o
- .debug_line    0x0000000000005050       0xc0 build/kernel/components/init/components.o
- .debug_line    0x0000000000005110       0x8d /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_udivsi3.o)
- .debug_line    0x000000000000519d       0x9e /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_divsi3.o)
- .debug_line    0x000000000000523b       0x6a /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_dvmd_tls.o)
+ .debug_line    0x0000000000000246       0xbd build/bsp/applications/application.o
+ .debug_line    0x0000000000000303      0x111 build/bsp/applications/board.o
+ .debug_line    0x0000000000000414       0x63 build/bsp/applications/startup.o
+ .debug_line    0x0000000000000477       0x92 build/kernel/src/clock.o
+ .debug_line    0x0000000000000509      0x19b build/kernel/src/device.o
+ .debug_line    0x00000000000006a4       0xdd build/kernel/src/idle.o
+ .debug_line    0x0000000000000781      0x783 build/kernel/src/ipc.o
+ .debug_line    0x0000000000000f04       0x88 build/kernel/src/irq.o
+ .debug_line    0x0000000000000f8c      0x41e build/kernel/src/kservice.o
+ .debug_line    0x00000000000013aa      0x29a build/kernel/src/mem.o
+ .debug_line    0x0000000000001644      0x176 build/kernel/src/object.o
+ .debug_line    0x00000000000017ba      0x12a build/kernel/src/scheduler.o
+ .debug_line    0x00000000000018e4      0x20b build/kernel/src/thread.o
+ .debug_line    0x0000000000001aef      0x217 build/kernel/src/timer.o
+ .debug_line    0x0000000000001d06       0xb0 build/kernel/libcpu/arm/am335x/cpu.o
+ .debug_line    0x0000000000001db6      0x11d build/kernel/libcpu/arm/am335x/interrupt.o
+ .debug_line    0x0000000000001ed3       0x9b build/kernel/libcpu/arm/am335x/stack.o
+ .debug_line    0x0000000000001f6e      0x112 build/kernel/libcpu/arm/am335x/trap.o
+ .debug_line    0x0000000000002080       0x8d build/kernel/libcpu/arm/am335x/context_gcc.o
+ .debug_line    0x000000000000210d       0xaf build/kernel/libcpu/arm/am335x/cp15_gcc.o
+ .debug_line    0x00000000000021bc       0xde build/kernel/libcpu/arm/am335x/start_gcc.o
+ .debug_line    0x000000000000229a       0x6a build/kernel/libcpu/arm/am335x/vector_gcc.o
+ .debug_line    0x0000000000002304      0x2d3 build/kernel/components/gdb/gdb_stub.o
+ .debug_line    0x00000000000025d7      0x13b build/kernel/components/gdb/hal_stub.o
+ .debug_line    0x0000000000002712      0x119 build/kernel/components/gdb/libcpu/arm/arm_stub.o
+ .debug_line    0x000000000000282b      0x248 build/kernel/components/drivers/serial/serial.o
+ .debug_line    0x0000000000002a73      0x222 build/kernel/components/drivers/src/dataqueue.o
+ .debug_line    0x0000000000002c95      0x2b3 build/kernel/components/finsh/shell.o
+ .debug_line    0x0000000000002f48       0xbf build/kernel/components/finsh/symbol.o
+ .debug_line    0x0000000000003007      0x393 build/kernel/components/finsh/cmd.o
+ .debug_line    0x000000000000339a       0x75 build/kernel/components/finsh/msh_cmd.o
+ .debug_line    0x000000000000340f      0x1f2 build/kernel/components/finsh/msh.o
+ .debug_line    0x0000000000003601      0x4ea build/kernel/components/finsh/finsh_compiler.o
+ .debug_line    0x0000000000003aeb       0xd5 build/kernel/components/finsh/finsh_error.o
+ .debug_line    0x0000000000003bc0      0x1c4 build/kernel/components/finsh/finsh_heap.o
+ .debug_line    0x0000000000003d84      0x106 build/kernel/components/finsh/finsh_init.o
+ .debug_line    0x0000000000003e8a      0x152 build/kernel/components/finsh/finsh_node.o
+ .debug_line    0x0000000000003fdc      0x24f build/kernel/components/finsh/finsh_ops.o
+ .debug_line    0x000000000000422b      0x3a7 build/kernel/components/finsh/finsh_parser.o
+ .debug_line    0x00000000000045d2      0x16b build/kernel/components/finsh/finsh_var.o
+ .debug_line    0x000000000000473d      0x134 build/kernel/components/finsh/finsh_vm.o
+ .debug_line    0x0000000000004871      0x331 build/kernel/components/finsh/finsh_token.o
+ .debug_line    0x0000000000004ba2      0x13d build/kernel/components/libc/minilibc/stdlib.o
+ .debug_line    0x0000000000004cdf      0x3f2 build/kernel/components/libc/minilibc/string.o
+ .debug_line    0x00000000000050d1       0xc0 build/kernel/components/init/components.o
+ .debug_line    0x0000000000005191       0x8d /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_udivsi3.o)
+ .debug_line    0x000000000000521e       0x9e /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_divsi3.o)
+ .debug_line    0x00000000000052bc       0x6a /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_dvmd_tls.o)
 
-.debug_str      0x0000000000000000     0x4545
+.debug_str      0x0000000000000000     0x461f
  .debug_str     0x0000000000000000      0x62e build/bsp/drivers/serial.o
                                         0x6ff (size before relaxing)
  .debug_str     0x000000000000062e      0x107 build/bsp/applications/application.o
                                         0x2cf (size before relaxing)
- .debug_str     0x0000000000000735      0x114 build/bsp/applications/board.o
+ .debug_str     0x0000000000000735      0x10d build/bsp/applications/board.o
                                         0x26b (size before relaxing)
- .debug_str     0x0000000000000849       0x32 build/bsp/applications/startup.o
+ .debug_str     0x0000000000000842       0x32 build/bsp/applications/startup.o
                                         0x135 (size before relaxing)
- .debug_str     0x000000000000087b       0x7f build/kernel/src/clock.o
+ .debug_str     0x0000000000000874       0x7f build/kernel/src/clock.o
                                         0x302 (size before relaxing)
- .debug_str     0x00000000000008fa      0x271 build/kernel/src/device.o
+ .debug_str     0x00000000000008f3      0x271 build/kernel/src/device.o
                                         0x685 (size before relaxing)
- .debug_str     0x0000000000000b6b       0xdc build/kernel/src/idle.o
+ .debug_str     0x0000000000000b64       0xdc build/kernel/src/idle.o
                                         0x383 (size before relaxing)
- .debug_str     0x0000000000000c47      0x45c build/kernel/src/ipc.o
+ .debug_str     0x0000000000000c40      0x45c build/kernel/src/ipc.o
                                         0x863 (size before relaxing)
- .debug_str     0x00000000000010a3       0x6d build/kernel/src/irq.o
+ .debug_str     0x000000000000109c       0x6d build/kernel/src/irq.o
                                         0x186 (size before relaxing)
- .debug_str     0x0000000000001110      0x2a0 build/kernel/src/kservice.o
+ .debug_str     0x0000000000001109      0x2a0 build/kernel/src/kservice.o
                                         0x7b3 (size before relaxing)
- .debug_str     0x00000000000013b0      0x198 build/kernel/src/mem.o
+ .debug_str     0x00000000000013a9      0x198 build/kernel/src/mem.o
                                         0x3aa (size before relaxing)
- .debug_str     0x0000000000001548      0x179 build/kernel/src/object.o
+ .debug_str     0x0000000000001541      0x179 build/kernel/src/object.o
                                         0x4ed (size before relaxing)
- .debug_str     0x00000000000016c1      0x180 build/kernel/src/scheduler.o
+ .debug_str     0x00000000000016ba      0x180 build/kernel/src/scheduler.o
                                         0x4a9 (size before relaxing)
- .debug_str     0x0000000000001841      0x127 build/kernel/src/thread.o
+ .debug_str     0x000000000000183a      0x127 build/kernel/src/thread.o
                                         0x5fa (size before relaxing)
- .debug_str     0x0000000000001968      0x1bc build/kernel/src/timer.o
+ .debug_str     0x0000000000001961      0x1bc build/kernel/src/timer.o
                                         0x551 (size before relaxing)
- .debug_str     0x0000000000001b24       0xda build/kernel/libcpu/arm/am335x/cpu.o
+ .debug_str     0x0000000000001b1d       0xda build/kernel/libcpu/arm/am335x/cpu.o
                                         0x222 (size before relaxing)
- .debug_str     0x0000000000001bfe      0x1db build/kernel/libcpu/arm/am335x/interrupt.o
+ .debug_str     0x0000000000001bf7      0x1db build/kernel/libcpu/arm/am335x/interrupt.o
                                         0x349 (size before relaxing)
- .debug_str     0x0000000000001dd9       0x4d build/kernel/libcpu/arm/am335x/stack.o
+ .debug_str     0x0000000000001dd2       0x4d build/kernel/libcpu/arm/am335x/stack.o
                                         0x177 (size before relaxing)
- .debug_str     0x0000000000001e26       0xd9 build/kernel/libcpu/arm/am335x/trap.o
-                                        0x3ac (size before relaxing)
- .debug_str     0x0000000000001eff      0x1c1 build/kernel/components/gdb/arm_stub.o
-                                        0x2f1 (size before relaxing)
- .debug_str     0x00000000000020c0      0x2f0 build/kernel/components/gdb/gdb_stub.o
-                                        0x579 (size before relaxing)
- .debug_str     0x00000000000023b0       0x77 build/kernel/components/gdb/hal_stub.o
+ .debug_str     0x0000000000001e1f       0xc4 build/kernel/libcpu/arm/am335x/trap.o
+                                        0x397 (size before relaxing)
+ .debug_str     0x0000000000001ee3      0x466 build/kernel/components/gdb/gdb_stub.o
+                                        0x5d2 (size before relaxing)
+ .debug_str     0x0000000000002349       0x86 build/kernel/components/gdb/hal_stub.o
                                         0x5ef (size before relaxing)
- .debug_str     0x0000000000002427      0x1a4 build/kernel/components/drivers/serial/serial.o
+ .debug_str     0x00000000000023cf      0x132 build/kernel/components/gdb/libcpu/arm/arm_stub.o
+                                        0x380 (size before relaxing)
+ .debug_str     0x0000000000002501      0x1a4 build/kernel/components/drivers/serial/serial.o
                                         0x70d (size before relaxing)
- .debug_str     0x00000000000025cb       0x9e build/kernel/components/drivers/src/dataqueue.o
+ .debug_str     0x00000000000026a5       0x9e build/kernel/components/drivers/src/dataqueue.o
                                         0x431 (size before relaxing)
- .debug_str     0x0000000000002669      0x355 build/kernel/components/finsh/shell.o
+ .debug_str     0x0000000000002743      0x355 build/kernel/components/finsh/shell.o
                                         0x908 (size before relaxing)
- .debug_str     0x00000000000029be       0x2f build/kernel/components/finsh/symbol.o
+ .debug_str     0x0000000000002a98       0x2f build/kernel/components/finsh/symbol.o
                                         0x1c9 (size before relaxing)
- .debug_str     0x00000000000029ed      0x8b6 build/kernel/components/finsh/cmd.o
+ .debug_str     0x0000000000002ac7      0x8b6 build/kernel/components/finsh/cmd.o
                                        0x11b2 (size before relaxing)
- .debug_str     0x00000000000032a3       0xf4 build/kernel/components/finsh/msh_cmd.o
+ .debug_str     0x000000000000337d       0xf4 build/kernel/components/finsh/msh_cmd.o
                                         0x24a (size before relaxing)
- .debug_str     0x0000000000003397      0x187 build/kernel/components/finsh/msh.o
+ .debug_str     0x0000000000003471      0x187 build/kernel/components/finsh/msh.o
                                         0x35e (size before relaxing)
- .debug_str     0x000000000000351e       0xda build/kernel/components/finsh/finsh_compiler.o
+ .debug_str     0x00000000000035f8       0xda build/kernel/components/finsh/finsh_compiler.o
                                         0x3bd (size before relaxing)
- .debug_str     0x00000000000035f8       0x9a build/kernel/components/finsh/finsh_error.o
+ .debug_str     0x00000000000036d2       0x9a build/kernel/components/finsh/finsh_error.o
                                         0x1af (size before relaxing)
- .debug_str     0x0000000000003692      0x119 build/kernel/components/finsh/finsh_heap.o
+ .debug_str     0x000000000000376c      0x119 build/kernel/components/finsh/finsh_heap.o
                                         0x3cc (size before relaxing)
- .debug_str     0x00000000000037ab       0x69 build/kernel/components/finsh/finsh_init.o
+ .debug_str     0x0000000000003885       0x69 build/kernel/components/finsh/finsh_init.o
                                         0x2b2 (size before relaxing)
- .debug_str     0x0000000000003814       0xe6 build/kernel/components/finsh/finsh_node.o
+ .debug_str     0x00000000000038ee       0xe6 build/kernel/components/finsh/finsh_node.o
                                         0x2b6 (size before relaxing)
- .debug_str     0x00000000000038fa      0x2cd build/kernel/components/finsh/finsh_ops.o
+ .debug_str     0x00000000000039d4      0x2cd build/kernel/components/finsh/finsh_ops.o
                                         0x42f (size before relaxing)
- .debug_str     0x0000000000003bc7      0x50c build/kernel/components/finsh/finsh_parser.o
+ .debug_str     0x0000000000003ca1      0x50c build/kernel/components/finsh/finsh_parser.o
                                         0x85b (size before relaxing)
- .debug_str     0x00000000000040d3       0xa5 build/kernel/components/finsh/finsh_var.o
+ .debug_str     0x00000000000041ad       0xa5 build/kernel/components/finsh/finsh_var.o
                                         0x38c (size before relaxing)
- .debug_str     0x0000000000004178       0x68 build/kernel/components/finsh/finsh_vm.o
+ .debug_str     0x0000000000004252       0x68 build/kernel/components/finsh/finsh_vm.o
                                         0x276 (size before relaxing)
- .debug_str     0x00000000000041e0      0x133 build/kernel/components/finsh/finsh_token.o
+ .debug_str     0x00000000000042ba      0x133 build/kernel/components/finsh/finsh_token.o
                                         0x5fd (size before relaxing)
- .debug_str     0x0000000000004313       0x49 build/kernel/components/libc/minilibc/stdlib.o
+ .debug_str     0x00000000000043ed       0x49 build/kernel/components/libc/minilibc/stdlib.o
                                         0x18d (size before relaxing)
- .debug_str     0x000000000000435c      0x146 build/kernel/components/libc/minilibc/string.o
+ .debug_str     0x0000000000004436      0x146 build/kernel/components/libc/minilibc/string.o
                                         0x30e (size before relaxing)
- .debug_str     0x00000000000044a2       0xa3 build/kernel/components/init/components.o
+ .debug_str     0x000000000000457c       0xa3 build/kernel/components/init/components.o
                                         0x1cb (size before relaxing)
 
-.debug_frame    0x0000000000000000     0x37c0
+.debug_frame    0x0000000000000000     0x37f0
  .debug_frame   0x0000000000000000      0x134 build/bsp/drivers/serial.o
  .debug_frame   0x0000000000000134       0x48 build/bsp/applications/application.o
  .debug_frame   0x000000000000017c       0x98 build/bsp/applications/board.o
@@ -2124,30 +2126,30 @@ OUTPUT(rtthread-beaglebone.elf elf32-littlearm)
  .debug_frame   0x00000000000017a4      0x144 build/kernel/libcpu/arm/am335x/interrupt.o
  .debug_frame   0x00000000000018e8       0x28 build/kernel/libcpu/arm/am335x/stack.o
  .debug_frame   0x0000000000001910       0xd4 build/kernel/libcpu/arm/am335x/trap.o
- .debug_frame   0x00000000000019e4       0x88 build/kernel/components/gdb/arm_stub.o
- .debug_frame   0x0000000000001a6c      0x304 build/kernel/components/gdb/gdb_stub.o
- .debug_frame   0x0000000000001d70       0x80 build/kernel/components/gdb/hal_stub.o
- .debug_frame   0x0000000000001df0      0x198 build/kernel/components/drivers/serial/serial.o
- .debug_frame   0x0000000000001f88       0xe8 build/kernel/components/drivers/src/dataqueue.o
- .debug_frame   0x0000000000002070      0x198 build/kernel/components/finsh/shell.o
- .debug_frame   0x0000000000002208      0x310 build/kernel/components/finsh/cmd.o
- .debug_frame   0x0000000000002518       0x60 build/kernel/components/finsh/msh_cmd.o
- .debug_frame   0x0000000000002578      0x114 build/kernel/components/finsh/msh.o
- .debug_frame   0x000000000000268c       0x64 build/kernel/components/finsh/finsh_compiler.o
- .debug_frame   0x00000000000026f0       0x70 build/kernel/components/finsh/finsh_error.o
- .debug_frame   0x0000000000002760       0xe0 build/kernel/components/finsh/finsh_heap.o
- .debug_frame   0x0000000000002840       0x7c build/kernel/components/finsh/finsh_init.o
- .debug_frame   0x00000000000028bc       0xf0 build/kernel/components/finsh/finsh_node.o
- .debug_frame   0x00000000000029ac      0x4d4 build/kernel/components/finsh/finsh_ops.o
- .debug_frame   0x0000000000002e80      0x240 build/kernel/components/finsh/finsh_parser.o
- .debug_frame   0x00000000000030c0       0xbc build/kernel/components/finsh/finsh_var.o
- .debug_frame   0x000000000000317c       0x68 build/kernel/components/finsh/finsh_vm.o
- .debug_frame   0x00000000000031e4      0x194 build/kernel/components/finsh/finsh_token.o
- .debug_frame   0x0000000000003378       0xb0 build/kernel/components/libc/minilibc/stdlib.o
- .debug_frame   0x0000000000003428      0x2c8 build/kernel/components/libc/minilibc/string.o
- .debug_frame   0x00000000000036f0       0x90 build/kernel/components/init/components.o
- .debug_frame   0x0000000000003780       0x20 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_udivsi3.o)
- .debug_frame   0x00000000000037a0       0x20 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_divsi3.o)
+ .debug_frame   0x00000000000019e4      0x334 build/kernel/components/gdb/gdb_stub.o
+ .debug_frame   0x0000000000001d18       0x80 build/kernel/components/gdb/hal_stub.o
+ .debug_frame   0x0000000000001d98       0x88 build/kernel/components/gdb/libcpu/arm/arm_stub.o
+ .debug_frame   0x0000000000001e20      0x198 build/kernel/components/drivers/serial/serial.o
+ .debug_frame   0x0000000000001fb8       0xe8 build/kernel/components/drivers/src/dataqueue.o
+ .debug_frame   0x00000000000020a0      0x198 build/kernel/components/finsh/shell.o
+ .debug_frame   0x0000000000002238      0x310 build/kernel/components/finsh/cmd.o
+ .debug_frame   0x0000000000002548       0x60 build/kernel/components/finsh/msh_cmd.o
+ .debug_frame   0x00000000000025a8      0x114 build/kernel/components/finsh/msh.o
+ .debug_frame   0x00000000000026bc       0x64 build/kernel/components/finsh/finsh_compiler.o
+ .debug_frame   0x0000000000002720       0x70 build/kernel/components/finsh/finsh_error.o
+ .debug_frame   0x0000000000002790       0xe0 build/kernel/components/finsh/finsh_heap.o
+ .debug_frame   0x0000000000002870       0x7c build/kernel/components/finsh/finsh_init.o
+ .debug_frame   0x00000000000028ec       0xf0 build/kernel/components/finsh/finsh_node.o
+ .debug_frame   0x00000000000029dc      0x4d4 build/kernel/components/finsh/finsh_ops.o
+ .debug_frame   0x0000000000002eb0      0x240 build/kernel/components/finsh/finsh_parser.o
+ .debug_frame   0x00000000000030f0       0xbc build/kernel/components/finsh/finsh_var.o
+ .debug_frame   0x00000000000031ac       0x68 build/kernel/components/finsh/finsh_vm.o
+ .debug_frame   0x0000000000003214      0x194 build/kernel/components/finsh/finsh_token.o
+ .debug_frame   0x00000000000033a8       0xb0 build/kernel/components/libc/minilibc/stdlib.o
+ .debug_frame   0x0000000000003458      0x2c8 build/kernel/components/libc/minilibc/string.o
+ .debug_frame   0x0000000000003720       0x90 build/kernel/components/init/components.o
+ .debug_frame   0x00000000000037b0       0x20 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_udivsi3.o)
+ .debug_frame   0x00000000000037d0       0x20 /usr/lib/gcc/arm-none-eabi/4.8.2/armv7-ar/thumb/softfp/libgcc.a(_divsi3.o)
 
 .debug_ranges   0x0000000000000000       0x60
  .debug_ranges  0x0000000000000000       0x60 build/kernel/components/finsh/finsh_compiler.o
@@ -2401,7 +2403,7 @@ _sysvar_table_end                                 build/kernel/components/finsh/
 _thread_keys                                      build/kernel/components/pthreads/pthread_tls.o
                                                   build/kernel/components/pthreads/pthread.o
 _timevalue                                        build/kernel/components/pthreads/clock_time.o
-arch_gdb_ops                                      build/kernel/components/gdb/arm_stub.o
+arch_gdb_ops                                      build/kernel/components/gdb/libcpu/arm/arm_stub.o
                                                   build/kernel/components/gdb/gdb_stub.o
 asctime                                           build/kernel/components/libc/minilibc/time.o
 asctime_r                                         build/kernel/components/libc/minilibc/time.o
@@ -2516,28 +2518,28 @@ finsh_vm_stack                                    build/kernel/components/finsh/
                                                   build/kernel/components/finsh/finsh_compiler.o
 free                                              build/kernel/components/libc/minilibc/stdlib.o
                                                   /usr/lib/gcc/arm-none-eabi/4.8.2/../../../arm-none-eabi/lib/armv7-ar/thumb/softfp/libc.a(lib_a-__call_atexit.o)
-gdb_arch_handle_exception                         build/kernel/components/gdb/arm_stub.o
+gdb_arch_handle_exception                         build/kernel/components/gdb/libcpu/arm/arm_stub.o
                                                   build/kernel/components/gdb/gdb_stub.o
-gdb_breakpoint                                    build/kernel/components/gdb/arm_stub.o
+gdb_breakpoint                                    build/kernel/components/gdb/libcpu/arm/arm_stub.o
                                                   build/kernel/components/gdb/hal_stub.o
-gdb_connected                                     build/kernel/components/gdb/hal_stub.o
+gdb_connected                                     build/kernel/components/gdb/libcpu/arm/arm_stub.o
+                                                  build/kernel/components/gdb/hal_stub.o
                                                   build/kernel/components/gdb/gdb_stub.o
-                                                  build/kernel/components/gdb/arm_stub.o
                                                   build/kernel/libcpu/arm/am335x/trap.o
                                                   build/bsp/applications/application.o
-gdb_get_register                                  build/kernel/components/gdb/arm_stub.o
+gdb_get_register                                  build/kernel/components/gdb/libcpu/arm/arm_stub.o
                                                   build/kernel/components/gdb/gdb_stub.o
 gdb_handle_exception                              build/kernel/components/gdb/gdb_stub.o
                                                   build/kernel/libcpu/arm/am335x/trap.o
 gdb_io_ops                                        build/kernel/components/gdb/hal_stub.o
                                                   build/kernel/components/gdb/gdb_stub.o
 gdb_process_exception                             build/kernel/components/gdb/gdb_stub.o
-gdb_put_register                                  build/kernel/components/gdb/arm_stub.o
+gdb_put_register                                  build/kernel/components/gdb/libcpu/arm/arm_stub.o
                                                   build/kernel/components/gdb/gdb_stub.o
 gdb_set_device                                    build/kernel/components/gdb/hal_stub.o
                                                   build/bsp/applications/application.o
-gdb_set_register                                  build/kernel/components/gdb/arm_stub.o
-                                                  build/kernel/libcpu/arm/am335x/trap.o
+gdb_set_register                                  build/kernel/components/gdb/libcpu/arm/arm_stub.o
+                                                  build/kernel/components/gdb/gdb_stub.o
 gdb_start                                         build/kernel/components/gdb/hal_stub.o
                                                   build/bsp/applications/application.o
 gdb_uart_getc                                     build/kernel/components/gdb/hal_stub.o
@@ -2552,6 +2554,7 @@ global_sysvar_list                                build/kernel/components/finsh/
 global_variable                                   build/kernel/components/finsh/finsh_var.o
                                                   build/kernel/components/finsh/finsh_heap.o
 gmtime_r                                          build/kernel/components/libc/minilibc/time.o
+gs                                                build/kernel/components/gdb/gdb_stub.o
 hardware_init_hook                                /usr/lib/gcc/arm-none-eabi/4.8.2/../../../arm-none-eabi/lib/armv7-ar/thumb/softfp/crt0.o
 hello                                             build/kernel/components/finsh/cmd.o
 isalpha                                           build/kernel/components/libc/minilibc/ctype.o
@@ -2753,7 +2756,7 @@ rand                                              build/kernel/components/libc/m
 rand_r                                            build/kernel/components/libc/minilibc/rand.o
 random                                            build/kernel/components/libc/minilibc/rand.o
 realloc                                           build/kernel/components/libc/minilibc/stdlib.o
-regs                                              build/kernel/components/gdb/arm_stub.o
+regs                                              build/kernel/components/gdb/libcpu/arm/arm_stub.o
 remcom_in_buffer                                  build/kernel/components/gdb/gdb_stub.o
 remcom_out_buffer                                 build/kernel/components/gdb/gdb_stub.o
 rt_application_init                               build/bsp/applications/application.o
