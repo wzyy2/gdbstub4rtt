@@ -50,8 +50,8 @@ if PLATFORM == 'gcc':
     LPATH = ''
 
     if BUILD == 'debug':
-        CFLAGS += ' -O0 -g -Wall'
-        AFLAGS += ' -g'
+        CFLAGS += ' -O0 -gdwarf-2 -Wall'
+        AFLAGS += ' -gdwarf-2'
     else:
         CFLAGS += ' -O2 -Wall'
 

@@ -27,17 +27,17 @@
 #define BREAK_INSTR_SIZE	4
 #define GDB_BREAKINST		0xe7ffdefe
 #define GDB_COMPILED_BREAK	0xe7ffdeff
+#define CACHE_FLUSH_IS_SAFE	1
 
-
-#define ARM_GP_REGS		16
-#define ARM_FP_REGS		8
+#define ARM_GP_REGS	    	16
+#define ARM_FP_REGS	    	8
 #define ARM_EXTRA_REGS		2
 #define GDB_MAX_REGS		(ARM_GP_REGS + (ARM_FP_REGS * 3) + ARM_EXTRA_REGS)
 #define NUMREGBYTES	    	(GDB_MAX_REGS << 2)
 
 
 /*at least double of numregbytes if needed*/
-#define BUFMAX			200
+#define BUFMAX			((NUMREGBYTES << 1) + 10)
 
 
 enum regnames {

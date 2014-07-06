@@ -97,17 +97,24 @@ struct gdb_io {
 };
 
 
+int gdb_hex2long(char **ptr, unsigned long *long_val);
+int gdb_mem2hex(char *mem, char *buf, int count);
+int gdb_hex2mem(char *buf, char *mem, int count);
+int gdb_ebin2mem(char *buf, char *mem, int count);
+
+
 extern struct gdb_io		gdb_io_ops;
-extern void gdb_start();
-extern void gdb_set_device(const char* device_name);
+void gdb_start();
+void gdb_set_device(const char* device_name);
 
 /* arch */
 extern struct gdb_arch		arch_gdb_ops;
-extern void gdb_get_register(unsigned long *gdb_regs);
-extern void gdb_put_register(unsigned long *gdb_regs);
-extern void gdb_set_register(void *hw_regs);
-extern int  gdb_arch_handle_exception();
+void gdb_get_register(unsigned long *gdb_regs);
+void gdb_put_register(unsigned long *gdb_regs);
+void gdb_set_register(void *hw_regs);
+int gdb_arch_handle_exception(char *remcom_in_buffer,
+                              char *remcom_out_buffer);
 
-extern void gdb_handle_exception(int signo, void *regs);
+void gdb_handle_exception(int signo, void *regs);
 
 #endif /* __GDB_STUB_H__ */

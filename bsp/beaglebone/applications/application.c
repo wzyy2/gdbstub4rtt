@@ -17,14 +17,41 @@
 #include <components.h>
 #include "gdb_stub.h"
 
+void rt_stub_one()
+{
+     char i;
+     i = 1;
+}
+void rt_stub_two()
+{
+    char a;
+    a = 2;
+}
+void rt_stub_three()
+{
+    rt_kprintf("three");
+}
+void rt_stub_four()
+{
+    rt_kprintf("four");
+/*x/1xw 0x8020ee64*/
+}
 
 
 void rt_init_thread_entry(void* parameter)
 {
+    char test =1;
     gdb_set_device("uart4");
     gdb_start();
 
     while(1){
+        test = 0;
+        test = 1;
+        test = 2;
+        rt_stub_one();
+        rt_stub_two();
+        rt_stub_three();
+        rt_stub_four();
         rt_kprintf("RT_THREAD run now!!!!!!!!!!!!!!!!!!!!!!!!! \n");
         rt_thread_delay(1000);
     }

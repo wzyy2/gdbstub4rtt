@@ -121,21 +121,43 @@ void gdb_put_register(unsigned long *gdb_regs)
 }
 
 
-/* It will be called after gdb_process_exception */
-int gdb_arch_handle_exception()
+/* It will be called during process_packet */
+int gdb_arch_handle_exception(char *remcom_in_buffer,
+                              char *remcom_out_buffer)
 {
-    /*
-     * If this was a compiled breakpoint, we need to move
-     * to the next instruction or we will breakpoint
-     * over and over again
-     */
-    if (compiled_break) {
-        compiled_break = 0;
-        regs->pc += 4;
-        return 1;
+    unsigned long addr;
+    char *ptr;
+
+    switch (remcom_in_buffer[0]) {
+        case 'D':
+        case 'k':
+        case 'c':
+            /*
+             * If this was a compiled breakpoint, we need to move
+             * to the next instruction or we will breakpoint
+             * over and over again
+             */
+            ptr = &remcom_in_buffer[1];
+            if (gdb_hex2long(&ptr, &addr))
+                regs->pc = addr;
+            else if (compiled_break == 1)
+                regs->pc += 4;
+
+            compiled_break = 0;
+
+            return 0;
+
+        case 's':
+            if (compiled_break == 1)
+                regs->pc += 4;
+            
+            compiled_break = 0;
+
+            return 0;
     }
-    else
-        return 0;
+
+	return -1;
+
 }
 
 

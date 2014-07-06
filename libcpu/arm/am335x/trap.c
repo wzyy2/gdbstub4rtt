@@ -60,9 +60,11 @@ void rt_hw_show_register (struct rt_hw_register *regs)
 void rt_hw_trap_udef(struct rt_hw_register *regs)
 {
 #ifdef RT_USING_GDB
+    rt_hw_cpu_icache_disable();
+    regs->pc -= 4;
     gdb_handle_exception(0x05, regs);
+    /*rt_hw_cpu_icache_enable();*/
 #else
-
     rt_hw_show_register(reg);
 
     rt_kprintf("undefined instruction\n");

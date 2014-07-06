@@ -148,7 +148,8 @@ vector_undef:
     mov      r0, r0
     ldr      lr, [sp, #60]            @ Get PC
     add      sp, sp, #72
-    subs     pc, lr, #4            @ return & move spsr_svc into cpsr
+    @ subs     pc, lr, #4            @ return & move spsr_svc into cpsr
+    movs     pc, lr
 
     .align  5
 .globl vector_swi
