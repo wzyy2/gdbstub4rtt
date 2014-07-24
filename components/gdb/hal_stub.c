@@ -17,25 +17,22 @@
 #include <rtdevice.h>
 #include <rthw.h>
 
-#include "hal_stub.h"
 #include "gdb_stub.h"
 
 
-static rt_device_t gdb_dev = RT_NULL;
+rt_device_t gdb_dev = RT_NULL;
 static struct rt_serial_device *gdb_serial;
+char gdb_io_set;
 
 void gdb_uart_putc(char c);
 int gdb_uart_getc();
 
 
-/**
- * if you want to use something instead of the serial,change it 
- */
+/*if you want to use something instead of the serial,change it */
 struct gdb_io	gdb_io_ops = {
     gdb_uart_getc,
     gdb_uart_putc
 };
-
 
 
 /**
@@ -78,7 +75,7 @@ void gdb_set_device(const char* device_name)
 
 void gdb_uart_putc(char c)
 { 
-#ifdef RT_USING_GDB_DEBUG
+#ifdef RT_GDB_DEBUG
     rt_kprintf("%c",c);
 #endif
     rt_device_write(gdb_dev, 0, &c, 1);
@@ -94,7 +91,7 @@ int gdb_uart_getc()
     do {
         ch = gdb_serial->ops->getc(gdb_serial);
     } while (ch == -1);
-#ifdef RT_USING_GDB_DEBUG
+#ifdef RT_GDB_DEBUG
     rt_kprintf("%c",ch);
 #endif
 

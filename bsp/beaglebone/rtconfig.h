@@ -2,11 +2,13 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
-
-
-
 #define RT_USING_GDB
-#define RT_USING_GDB_DEBUG
+#define RT_GDB_DEBUG
+#define RT_GDB_ICACHE
+#define RT_GDB_HAVE_SWBP 1
+#define RT_GDB_HAVE_HWBP 0
+
+
 // <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
 
 // <integer name="RT_NAME_MAX" description="Maximal size of kernel object name length" default="6" />

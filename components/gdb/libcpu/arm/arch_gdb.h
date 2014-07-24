@@ -15,13 +15,28 @@
  * 2014-07-04     wzyy2      first version
  */
 #ifndef __ARM_GDB_H__
-#define __ARM_GDB_H__
+#define __ARM_GDB_H__ 
+
+#include <rtthread.h>
+
+
+#ifndef RT_GDB_HAVE_HWBP
+    #define RT_GDB_HAVE_HWBP 0
+#endif
+#ifndef RT_GDB_HAVE_SWBP
+    #define RT_GDB_HAVE_SWBP 1
+#endif
+
+
+#if RT_GDB_HAVE_HWBP
+    #error GDB:No hardware_breakpoint support
+#endif
 
 
 /*
  * By doing this as an undefined instruction trap, we force a mode
  * switch from SVC to UND mode, allowing us to save full kernel state.
- * We also define a KGDB_COMPILED_BREAK which can be used to compile
+ * We also define a GDB_COMPILED_BREAK which can be used to compile
  * in breakpoints. 
  */
 #define BREAK_INSTR_SIZE	4
@@ -36,9 +51,8 @@
 #define NUMREGBYTES	    	(GDB_MAX_REGS << 2)
 
 
-/*at least double of numregbytes if needed*/
-#define BUFMAX			((NUMREGBYTES << 1) + 10)
-
+//#define BUFMAX			((NUMREGBYTES << 1) + 10)
+#define BUFMAX			400
 
 enum regnames {
     GDB_R0,     /*0*/
@@ -57,7 +71,7 @@ enum regnames {
     GDB_SPT,    /*13*/
     GDB_LR,     /*14*/
     GDB_PC,     /*15*/
-    GDB_CPSR = GDB_MAX_REGS-1    /*16*/
+    GDB_CPSR = GDB_MAX_REGS-1 
 };
 
 

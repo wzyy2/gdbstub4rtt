@@ -60,12 +60,11 @@ void rt_hw_show_register (struct rt_hw_register *regs)
 void rt_hw_trap_udef(struct rt_hw_register *regs)
 {
 #ifdef RT_USING_GDB
-    rt_hw_cpu_icache_disable();
-    regs->pc -= 4;
-    gdb_handle_exception(0x05, regs);
-    /*rt_hw_cpu_icache_enable();*/
-#else
-    rt_hw_show_register(reg);
+    regs->pc -= 4; //lr in undef is pc + 4
+    if (gdb_undef_hook(regs))
+        return;
+#endif
+    rt_hw_show_register(regs);
 
     rt_kprintf("undefined instruction\n");
     rt_kprintf("thread %.*s stack:\n", RT_NAME_MAX, rt_current_thread->name);
@@ -74,8 +73,6 @@ void rt_hw_trap_udef(struct rt_hw_register *regs)
     list_thread();
 #endif
     rt_hw_cpu_shutdown();
-
-#endif
 }
 
 /**
@@ -126,6 +123,13 @@ void rt_hw_trap_pabt(struct rt_hw_register *regs)
  */
 void rt_hw_trap_dabt(struct rt_hw_register *regs)
 {
+#ifdef RT_USING_GDB
+    if (gdb_mem_fault_handler) {
+        regs->pc = (unsigned long)gdb_mem_fault_handler; 
+        return;
+    }
+#endif
+
 	rt_hw_show_register(regs);
 
 	rt_kprintf("data abort\n");

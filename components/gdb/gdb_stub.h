@@ -24,15 +24,37 @@
 
 #include <rtthread.h>
 #include <arch_gdb.h>
-#include <hal_stub.h>
-
-#define GDB_MAX_BREAKPOINTS 10
 
 
-/**
- * gdb_connected - Is a host GDB connected to us?
- */
-int				gdb_connected;
+
+#ifndef RT_GDB_MAX_BREAKPOINTS
+    #define GDB_MAX_BREAKPOINTS 20
+#else
+    #define GDB_MAX_BREAKPOINTS  RT_GDB_MAX_BREAKPOINTS
+#endif
+
+
+// Signal definitions
+#define SIGHUP  1       /* hangup */
+#define SIGINT  2       /* interrupt */   //irq or fiq
+#define SIGQUIT 3       /* quit */
+#define SIGILL  4       /* illegal instruction (not reset when caught) */
+#define SIGTRAP 5       /* trace trap (not reset when caught) */
+#define SIGIOT  6       /* IOT instruction */
+#define SIGABRT 6       /* used by abort, replace SIGIOT in the future */
+#define SIGEMT  7       /* EMT instruction */
+#define SIGFPE  8       /* floating point exception */
+#define SIGKILL 9       /* kill (cannot be caught or ignored) */
+#define SIGBUS  10      /* bus error */  //abort or reserved
+#define SIGSEGV 11      /* segmentation violation */
+#define SIGSYS  12      /* bad argument to system call */
+#define SIGPIPE 13      /* write on a pipe with no one to read it */
+#define SIGALRM 14      /* alarm clock */
+#define SIGTERM 15      /* software termination signal from kill */
+
+
+#define SET_MEM_FAULT_TRAP(x) ({mem_fault = 0; x(); mem_fault;})
+
 
 enum gdb_bptype {
     BP_BREAKPOINT = 0,
@@ -96,25 +118,39 @@ struct gdb_io {
     int			(*init) (void);
 };
 
+extern int		gdb_connected;
+extern void* volatile gdb_mem_fault_handler;
 
 int gdb_hex2long(char **ptr, unsigned long *long_val);
 int gdb_mem2hex(char *mem, char *buf, int count);
 int gdb_hex2mem(char *buf, char *mem, int count);
 int gdb_ebin2mem(char *buf, char *mem, int count);
 
+int gdb_set_sw_break(unsigned long addr);
+int gdb_remove_sw_break(unsigned long addr);
+int gdb_isremovedbreak(unsigned long addr);
 
+void gdb_console_write(const char *s, unsigned count);
+
+
+/* hal */
 extern struct gdb_io		gdb_io_ops;
+extern rt_device_t gdb_dev;
 void gdb_start();
 void gdb_set_device(const char* device_name);
 
+
 /* arch */
 extern struct gdb_arch		arch_gdb_ops;
+void gdb_breakpoint();
 void gdb_get_register(unsigned long *gdb_regs);
 void gdb_put_register(unsigned long *gdb_regs);
 void gdb_set_register(void *hw_regs);
 int gdb_arch_handle_exception(char *remcom_in_buffer,
                               char *remcom_out_buffer);
+void gdb_flush_icache_range(unsigned long start, unsigned long end);
+int gdb_undef_hook(void *regs);
 
-void gdb_handle_exception(int signo, void *regs);
+int gdb_handle_exception(int signo, void *regs);
 
 #endif /* __GDB_STUB_H__ */

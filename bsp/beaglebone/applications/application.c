@@ -26,6 +26,8 @@ void rt_stub_two()
 {
     char a;
     a = 2;
+    if( a ==2 )
+        a=3;
 }
 void rt_stub_three()
 {

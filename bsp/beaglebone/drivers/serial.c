@@ -162,28 +162,6 @@ static const struct rt_uart_ops am33xx_uart_ops =
     am33xx_getc,
 };
 
-static int am33xx_getc_polling(struct rt_serial_device *serial)
-{   
-    int ch;
-    struct am33xx_uart* uart;
-
-    RT_ASSERT(serial != RT_NULL);
-    uart = (struct am33xx_uart *)serial->parent.user_data;
-
-    ch = -1;
-    while(!(UART_LSR_REG(uart->base) & 0x01));
-    ch = UART_RHR_REG(uart->base) & 0xff;
-
-    return ch;
-}
-
-static const struct rt_uart_ops am33xx_gdb_ops =
-{
-    am33xx_configure,
-    am33xx_control,
-    am33xx_putc,
-    am33xx_getc_polling,
-};
 
 
 /* UART device driver structure */
@@ -366,6 +344,42 @@ static void config_pinmux(void)
     REG32(ctlm_base + 0x800 + 0x0C0) = 0x04;
 #endif
 }
+
+static int am33xx_putc_poll(struct rt_serial_device *serial, char c)
+{
+    struct am33xx_uart* uart;
+
+    RT_ASSERT(serial != RT_NULL);
+    uart = (struct am33xx_uart *)serial->parent.user_data;
+
+    while (!(UART_LSR_REG(uart->base) & 0x20));
+    UART_THR_REG(uart->base) = c;
+
+    return 1;
+}
+
+static int am33xx_getc_poll(struct rt_serial_device *serial)
+{   
+    int ch;
+    struct am33xx_uart* uart;
+
+    RT_ASSERT(serial != RT_NULL);
+    uart = (struct am33xx_uart *)serial->parent.user_data;
+
+    ch = -1;
+    while(!(UART_LSR_REG(uart->base) & 0x01));
+    ch = UART_RHR_REG(uart->base) & 0xff;
+
+    return ch;
+}
+
+static const struct rt_uart_ops am33xx_gdb_ops =
+{
+    am33xx_configure,
+    am33xx_control,
+    am33xx_putc_poll,
+    am33xx_getc_poll,
+};
 
 int rt_hw_serial_init(void)
 {
