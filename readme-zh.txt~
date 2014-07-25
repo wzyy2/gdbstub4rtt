@@ -19,8 +19,30 @@
 
 若要使用STM32F407测试GDB,就用BSP/xxx覆盖RTT下的同名文件夹
 
+三 宏配置说明
+1) RT_GDB_HAVE_HWBP
+1开启硬件断点
+注意平台是否支持!!!!!!!!!!!!!!
+
+
+2) RT_GDB_HAVE_SWBP
+1开启软件断点
+注意平台是否支持!!!!!!!!!!!!!!
+
+
+3) RT_GDB_MAX_BREAKPOINTS
+最大软件断点数量
+不加默认20
+
+4) RT_GDB_ICACHE
+是否使用ICACHE
+若使用了ICACHE则要开启此宏,保证断点覆盖后及时刷新
+
+5) RT_GDB_DEBUG
+测试开发用
+会打印GDB收发信息到默认串口上,以供获取数据
  
-三 使用说明
+四 使用说明
 1) 移植平台(BBB板直接跳至步骤4)
 若是cortexA或者arm9架构的片子,参考BBB板DEMO
 在udef异常的函数里,加入gdb_undef_hook的调用
@@ -57,30 +79,6 @@ target remote /dev/ttyUSB0(linux)  或者 COM1 (windows)
 PS:
 	编译需要打开-g选项(最好是-g而不是其他调试选项,不然可能出现未知错误)
 	BBB板默认DEBUG串口输出,uart4作为GDB通信口
-
-
-四 宏配置说明
-1) RT_GDB_HAVE_HWBP
-1开启硬件断点
-注意平台是否支持!!!!!!!!!!!!!!
-
-
-2) RT_GDB_HAVE_SWBP
-1开启软件断点
-注意平台是否支持!!!!!!!!!!!!!!
-
-
-3) RT_GDB_MAX_BREAKPOINTS
-最大软件断点数量
-不加默认20
-
-4) RT_GDB_ICACHE
-是否使用ICACHE
-若使用了ICACHE则要开启此宏,保证断点覆盖后及时刷新
-
-5) RT_GDB_DEBUG
-测试开发用
-会打印GDB收发信息到默认串口上,以供获取数据
 
 
 五 移植说明
