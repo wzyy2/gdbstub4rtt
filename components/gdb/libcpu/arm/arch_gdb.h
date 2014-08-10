@@ -74,6 +74,17 @@ enum regnames {
     GDB_CPSR = GDB_MAX_REGS-1 
 };
 
+/* arch */
+extern struct gdb_arch		arch_gdb_ops;
+void gdb_breakpoint();
+void gdb_get_register(unsigned long *gdb_regs);
+void gdb_put_register(unsigned long *gdb_regs);
+void gdb_set_register(void *hw_regs);
+int gdb_arch_handle_exception(char *remcom_in_buffer,
+                              char *remcom_out_buffer);
+void gdb_flush_icache_range(unsigned long start, unsigned long end);
+int gdb_undef_hook(void *regs);
 
+int gdb_handle_exception(int signo, void *regs);
 
 #endif /* __ARM_GDB_H__ */

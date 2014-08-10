@@ -33,9 +33,9 @@
 .equ I_Bit,           0x80            @ when I bit is set, IRQ is disabled
 .equ F_Bit,           0x40            @ when F bit is set, FIQ is disabled
 
-.equ UND_Stack_Size,  0x00000100
+.equ UND_Stack_Size,  0x00000200
 .equ SVC_Stack_Size,  0x00000100
-.equ ABT_Stack_Size,  0x00000100
+.equ ABT_Stack_Size,  0x00000000
 .equ FIQ_Stack_Size,  0x00000000
 .equ IRQ_Stack_Size,  0x00000100
 .equ USR_Stack_Size,  0x00000100
@@ -157,7 +157,6 @@ vector_undef:
     ldr      lr, [sp, #60]          @/* Get PC   */
     add      sp, sp, #72
     movs     pc, lr                 @/* return & move spsr_svc into cpsr */
-
 
     .align  5
 .globl vector_swi

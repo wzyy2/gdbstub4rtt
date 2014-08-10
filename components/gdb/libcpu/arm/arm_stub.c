@@ -39,17 +39,6 @@ struct gdb_arch arch_gdb_ops = {
 	.gdb_bpt_instr		=  {0xfe, 0xde, 0xff, 0xe7}  //Little-Endian
 };
 
-
-/**
- * gdb_breakpoint - generate a compiled_breadk
- * It is used to sync up with a debugger and stop progarm
- */
-void gdb_breakpoint()
-{
-    asm(".word 0xe7ffdeff");
-}
-
-
 struct rt_gdb_register
 {
     rt_uint32_t r0;
@@ -72,6 +61,14 @@ struct rt_gdb_register
     rt_uint32_t ORIG_r0;
 }*regs;
 
+/**
+ * gdb_breakpoint - generate a compiled_breadk
+ * It is used to sync up with a debugger and stop progarm
+ */
+void gdb_breakpoint()
+{
+    asm(".word 0xe7ffdeff");
+}
 
 void gdb_set_register(void *hw_regs)
 {
@@ -81,7 +78,7 @@ void gdb_get_register(unsigned long *gdb_regs)
 {
     int regno;
     /* Initialize all to zero. */
-    for (regno = 0; regno < 17; regno++)
+    for (regno = 0; regno < GDB_MAX_REGS; regno++)
         gdb_regs[regno] = 0;
 
     gdb_regs[GDB_R0]		= regs->r0;

@@ -2,9 +2,11 @@ Import('rtconfig')
 from building import *
 
 comm = 'libcpu/' + rtconfig.ARCH
+if (rtconfig.CPU == 'cortex-m4') or (rtconfig.CPU == 'cortex-m3'):
+    comm = 'libcpu/cortexm'
 
 cwd = GetCurrentDir()
-src = Glob('*.c') + Glob(comm + '/*.c')
+src = Glob('*.c') + Glob(comm + '/*.c') + Glob(comm + '/*.S')
 
 CPPPATH = [cwd, cwd + '/' + comm]
 

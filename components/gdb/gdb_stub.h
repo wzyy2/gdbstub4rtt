@@ -26,7 +26,6 @@
 #include <arch_gdb.h>
 
 
-
 #ifndef RT_GDB_MAX_BREAKPOINTS
     #define GDB_MAX_BREAKPOINTS 20
 #else
@@ -51,10 +50,6 @@
 #define SIGPIPE 13      /* write on a pipe with no one to read it */
 #define SIGALRM 14      /* alarm clock */
 #define SIGTERM 15      /* software termination signal from kill */
-
-
-#define SET_MEM_FAULT_TRAP(x) ({mem_fault = 0; x(); mem_fault;})
-
 
 enum gdb_bptype {
     BP_BREAKPOINT = 0,
@@ -87,12 +82,8 @@ struct gdb_bkpt {
  * breakpoint.
  * @remove_hw_breakpoint: Allow an architecture to specify how to remove a
  * hardware breakpoint.
- * @disable_hw_break: Allow an architecture to specify how to disable
- * hardware breakpoints for a single cpu.
  * @remove_all_hw_break: Allow an architecture to specify how to remove all
  * hardware breakpoints.
- * @correct_hw_break: Allow an architecture to specify how to correct the
- * hardware debug registers.
  */
 struct gdb_arch {
 	unsigned char		gdb_bpt_instr[BREAK_INSTR_SIZE];
@@ -100,9 +91,7 @@ struct gdb_arch {
 
 	int	(*set_hw_breakpoint)(unsigned long, int, enum gdb_bptype);
 	int	(*remove_hw_breakpoint)(unsigned long, int, enum gdb_bptype);
-	void	(*disable_hw_break)();
 	void	(*remove_all_hw_break)(void);
-	void	(*correct_hw_break)(void);
 };
 /**
  * struct gdb_io - Describe the interface for an I/O driver to talk with KGDB.
@@ -125,13 +114,11 @@ int gdb_hex2long(char **ptr, unsigned long *long_val);
 int gdb_mem2hex(char *mem, char *buf, int count);
 int gdb_hex2mem(char *buf, char *mem, int count);
 int gdb_ebin2mem(char *buf, char *mem, int count);
-
 int gdb_set_sw_break(unsigned long addr);
 int gdb_remove_sw_break(unsigned long addr);
 int gdb_isremovedbreak(unsigned long addr);
-
 void gdb_console_write(const char *s, unsigned count);
-
+int gdb_handle_exception(int signo, void *regs);
 
 /* hal */
 extern struct gdb_io		gdb_io_ops;
@@ -140,17 +127,5 @@ void gdb_start();
 void gdb_set_device(const char* device_name);
 
 
-/* arch */
-extern struct gdb_arch		arch_gdb_ops;
-void gdb_breakpoint();
-void gdb_get_register(unsigned long *gdb_regs);
-void gdb_put_register(unsigned long *gdb_regs);
-void gdb_set_register(void *hw_regs);
-int gdb_arch_handle_exception(char *remcom_in_buffer,
-                              char *remcom_out_buffer);
-void gdb_flush_icache_range(unsigned long start, unsigned long end);
-int gdb_undef_hook(void *regs);
-
-int gdb_handle_exception(int signo, void *regs);
 
 #endif /* __GDB_STUB_H__ */

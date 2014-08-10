@@ -2,12 +2,11 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
+// <section name="RT_USING_GDB" description="Gdb Stub for rtt" default="true" >
 #define RT_USING_GDB
 //#define RT_GDB_DEBUG
 #define RT_GDB_ICACHE
-#define RT_GDB_HAVE_SWBP 1
-#define RT_GDB_HAVE_HWBP 0
-
+// </section>
 
 // <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
 

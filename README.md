@@ -12,3 +12,7 @@ RT-Thread is an open source real-time operating system for embedded devices from
 	you have to copy the code to the RTT-ROOT folder.
 	you can find demo from the bsp of beaglebone.
 
+## Help ##
+
+    more in readme-zh
+

@@ -21,6 +21,7 @@
 #ifdef RT_USING_GDB
 #include "gdb_stub.h"
 #endif
+
 /**
  * @addtogroup AM33XX
  */
@@ -48,7 +49,6 @@ void rt_hw_show_register (struct rt_hw_register *regs)
 	rt_kprintf("cpsr:0x%08x\n", regs->cpsr);
 }
 
-
 /**
  * When ARM7TDMI comes across an instruction which it cannot handle,
  * it takes the undefined instruction trap.
@@ -59,20 +59,22 @@ void rt_hw_show_register (struct rt_hw_register *regs)
  */
 void rt_hw_trap_udef(struct rt_hw_register *regs)
 {
+
 #ifdef RT_USING_GDB
     regs->pc -= 4; //lr in undef is pc + 4
     if (gdb_undef_hook(regs))
         return;
 #endif
-    rt_hw_show_register(regs);
 
-    rt_kprintf("undefined instruction\n");
-    rt_kprintf("thread %.*s stack:\n", RT_NAME_MAX, rt_current_thread->name);
+	rt_hw_show_register(regs);
+
+	rt_kprintf("undefined instruction\n");
+	rt_kprintf("thread %.*s stack:\n", RT_NAME_MAX, rt_current_thread->name);
 
 #ifdef RT_USING_FINSH
-    list_thread();
+	list_thread();
 #endif
-    rt_hw_cpu_shutdown();
+	rt_hw_cpu_shutdown();
 }
 
 /**
@@ -123,13 +125,13 @@ void rt_hw_trap_pabt(struct rt_hw_register *regs)
  */
 void rt_hw_trap_dabt(struct rt_hw_register *regs)
 {
+
 #ifdef RT_USING_GDB
     if (gdb_mem_fault_handler) {
         regs->pc = (unsigned long)gdb_mem_fault_handler; 
         return;
     }
 #endif
-
 	rt_hw_show_register(regs);
 
 	rt_kprintf("data abort\n");
