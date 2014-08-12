@@ -142,7 +142,7 @@ cm系列可能会因为访问不可访问的地址造成出错,有需求自己�
 	先将得到的components文件夹覆盖RTT根目录
 	然后若要使用BBB板测试GDB,就用BSP/beaglebone和libpcu/am335x覆盖RTT下的同名文件夹
 
-	若要使用STM32F407测试GDB,就用BSP/xxx和libpcu/cortexm4覆盖RTT下的同名文件夹,同时更改编译器为gcc
+	若要使用STM32F407测试GDB,就用BSP/stm32F4xx覆盖RTT下的同名文件夹,同时更改编译器为gcc
 
 3) 宏
 	打开RT_USING_GDB
@@ -210,8 +210,7 @@ PS:
 	分配足够的栈空间给undef
 
 2) cortexM3以及M4
-	复制libcpu/arm/cortex-m4/cpuport.c里的rt_hw_debugmon_exception
-	复制libcpu/arm/cortex-m4/context_gcc.S里的debugmon_handler(记得要删除已有的哦)
+	删除已有的debugmon_handler
 	优先级分组有变化的话,重定义宏GDB_CORTEXM_PRIORITY_MAX,就是basepri的设置值,满足屏蔽中断的同时不屏蔽debugmon
 	使用有需要的话,重定义cortexm_stub.c的data_acess数组,也就是允许GDB访问的地址空间
 	增大_system_stack_size,也就是MSP栈的大小
