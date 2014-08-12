@@ -16,6 +16,10 @@
 #include <rtthread.h>
 #include <components.h>
 
+#ifdef RT_USING_GDB
+#include <gdb_stub.h>
+#endif
+
 int rt_application_init()
 {
     /* do component initialization */
