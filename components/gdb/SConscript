@@ -4,7 +4,7 @@ from building import *
 comm = 'libcpu/' + rtconfig.ARCH
 if (rtconfig.CPU == 'cortex-m4') or (rtconfig.CPU == 'cortex-m3'):
     comm = 'libcpu/cortexm'
-
+src = []
 cwd = GetCurrentDir()
 if rtconfig.PLATFORM == 'armcc':
 	src = Glob('*.c') + Glob(comm + '/*.c') + Glob(comm + '/*_rvds.S')

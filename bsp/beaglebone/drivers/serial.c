@@ -80,6 +80,11 @@ static rt_err_t am33xx_configure(struct rt_serial_device *serial, struct serial_
         UART_DLL_REG(base) = 26;
         UART_DLH_REG(base) = 0;
     }
+    else if (cfg->baud_rate == BAUD_RATE_9600)
+    {
+        UART_DLL_REG(base) = 0x38;
+        UART_DLH_REG(base) = 1;
+    }
     else
     {
         NOT_IMPLEMENTED();
@@ -338,42 +343,6 @@ static void config_pinmux(void)
 #endif
 }
 
-static int am33xx_putc_poll(struct rt_serial_device *serial, char c)
-{
-    struct am33xx_uart* uart;
-
-    RT_ASSERT(serial != RT_NULL);
-    uart = (struct am33xx_uart *)serial->parent.user_data;
-
-    while (!(UART_LSR_REG(uart->base) & 0x20));
-    UART_THR_REG(uart->base) = c;
-
-    return 1;
-}
-
-static int am33xx_getc_poll(struct rt_serial_device *serial)
-{   
-    int ch;
-    struct am33xx_uart* uart;
-
-    RT_ASSERT(serial != RT_NULL);
-    uart = (struct am33xx_uart *)serial->parent.user_data;
-
-    ch = -1;
-    while(!(UART_LSR_REG(uart->base) & 0x01));
-    ch = UART_RHR_REG(uart->base) & 0xff;
-
-    return ch;
-}
-
-static const struct rt_uart_ops am33xx_gdb_ops =
-{
-    am33xx_configure,
-    am33xx_control,
-    am33xx_putc_poll,
-    am33xx_getc_poll,
-};
-
 int rt_hw_serial_init(void)
 {
     struct serial_configure config;
@@ -475,7 +444,7 @@ int rt_hw_serial_init(void)
 #endif
 
 #ifdef RT_USING_UART4
-    config.baud_rate = BAUD_RATE_115200;
+    config.baud_rate = BAUD_RATE_9600;
     config.bit_order = BIT_ORDER_LSB;
     config.data_bits = DATA_BITS_8;
     config.parity    = PARITY_NONE;
@@ -483,7 +452,7 @@ int rt_hw_serial_init(void)
     config.invert    = NRZ_NORMAL;
 	config.bufsz     = RT_SERIAL_RB_BUFSZ;
 
-    serial4.ops    = &am33xx_gdb_ops;
+    serial4.ops    = &am33xx_uart_ops;
     serial4.config = config;
     /* enable RX interrupt */
     UART_IER_REG(uart4.base) = 0x00;
